@@ -10,11 +10,8 @@
     <div class="container rental-detail">
         <div class="rental-header card-form">
             <div class="rental-car-big">
-                {% if rental.car.main_image %}
-                    <img src="{{ rental.car.main_image.url }}" alt="">
-                {% else %}
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80" alt="">
-                {% endif %}
+                <img src="{{ rental.car.photo_url }}" alt="">
+
                 <div>
                     <h2>{{ rental.car.full_name }}</h2>
                     <p class="muted">{{ rental.car.number_plate }} · {{ rental.car.get_car_class_display }}</p>

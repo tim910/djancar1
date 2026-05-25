@@ -1,5 +1,48 @@
 from django.db import models
 from django.urls import reverse
+from django.templatetags.static import static
+
+
+# Маппинг brand+model → файл в static/images/
+# Используется когда нет main_image (например на Render free где media/ ephemeral)
+STATIC_CAR_IMAGES = {
+    'Kia Rio': 'images/Rio.webp',
+    'Hyundai Solaris': 'images/solaris.jpg',
+    'LADA Vesta': 'images/vesta.webp',
+    'LADA Granta': 'images/granta.webp',
+    'Renault Logan': 'images/logan.webp',
+    'Volkswagen Polo': 'images/polo.webp',
+    'Skoda Octavia': 'images/octavia.webp',
+    'Toyota Camry': 'images/camry.jpg',
+    'Kia K5': 'images/k5.webp',
+    'Mazda 6': 'images/mazda 6.webp',
+    'Hyundai Creta': 'images/Hyundai Creta.webp',
+    'Kia Sportage': 'images/Kia Sportage.jpg',
+    'Renault Duster': 'images/Renault Duster.webp',
+    'Nissan X-Trail': 'images/Nissan X-Trail.webp',
+    'Geely Coolray': 'images/Geely Coolray.webp',
+    'Mercedes-Benz E-Class': 'images/e class.jpg',
+    'Audi A6': 'images/a6.webp',
+    'Tesla Model 3': 'images/Tesla Model 3.jpg',
+    'Evolute i-Pro': 'images/e3.webp',
+    'Москвич 3е': 'images/3(.webp',
+    'Porsche Cayenne': 'images/Porsche Cayenne.webp',
+    'Mercedes-Benz G-Class': 'images/Mercedes-Benz G-Class.jpg',
+    'BMW X7': 'images/BMW X7.jpg',
+    'Kia Optima': 'images/optima.jpg',
+    'Datsun on-DO': 'images/датсун он до.webp',
+}
+
+
+def get_static_car_image(full_name):
+    """Возвращает URL картинки авто из static по названию марка+модель."""
+    filename = STATIC_CAR_IMAGES.get(full_name)
+    if filename:
+        try:
+            return static(filename)
+        except Exception:
+            pass
+    return None
 
 
 class CarClass(models.TextChoices):
@@ -126,6 +169,19 @@ class Car(models.Model):
     @property
     def full_name(self):
         return f'{self.brand} {self.model}'
+
+    @property
+    def photo_url(self):
+        """URL картинки: загруженная (admin) → static fallback → внешняя заглушка."""
+        if self.main_image:
+            try:
+                return self.main_image.url
+            except Exception:
+                pass
+        static_url = get_static_car_image(self.full_name)
+        if static_url:
+            return static_url
+        return 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
 
     @property
     def is_available(self):

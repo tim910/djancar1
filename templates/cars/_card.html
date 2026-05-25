@@ -1,11 +1,7 @@
 {% load static %}
 <a href="{{ car.get_absolute_url }}" class="car-card">
     <div class="car-card-image">
-        {% if car.main_image %}
-            <img src="{{ car.main_image.url }}" alt="{{ car.full_name }}">
-        {% else %}
-            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80" alt="{{ car.full_name }}">
-        {% endif %}
+        <img src="{{ car.photo_url }}" alt="{{ car.full_name }}">
         <span class="status-pill status-{{ car.status }}">{{ car.get_status_display }}</span>
         <span class="class-pill">{{ car.get_car_class_display }}</span>
     </div>

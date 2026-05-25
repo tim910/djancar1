@@ -54,20 +54,24 @@ class CarAdmin(admin.ModelAdmin):
     )
 
     def main_image_preview(self, obj):
-        if obj.main_image:
+        url = obj.photo_url
+        if url:
+            source = 'загруженное' if obj.main_image else 'из static/images/'
             return format_html(
-                '<img src="{}" style="max-width:400px;max-height:280px;border-radius:12px;'
-                'box-shadow:0 4px 16px rgba(0,0,0,0.15)"/>',
-                obj.main_image.url
+                '<div><img src="{}" style="max-width:400px;max-height:280px;border-radius:12px;'
+                'box-shadow:0 4px 16px rgba(0,0,0,0.15)"/></div>'
+                '<small style="color:#888">источник: {}</small>',
+                url, source
             )
-        return format_html('<em style="color:#999">Загрузите фото и сохраните, чтобы увидеть превью</em>')
+        return format_html('<em style="color:#999">Нет фото</em>')
     main_image_preview.short_description = 'Превью главного фото'
 
     def thumb(self, obj):
-        if obj.main_image:
+        url = obj.photo_url
+        if url:
             return format_html(
                 '<img src="{}" style="height:56px;width:84px;object-fit:cover;border-radius:6px"/>',
-                obj.main_image.url
+                url
             )
         return format_html('<span style="color:#bbb;font-size:11px">нет фото</span>')
     thumb.short_description = 'Фото'

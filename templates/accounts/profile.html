@@ -68,7 +68,8 @@
                 {% for r in rentals %}
                 <a href="{% url 'rentals:detail' r.id %}" class="rental-row">
                     <div class="rental-car">
-                        {% if r.car.main_image %}<img src="{{ r.car.main_image.url }}">{% endif %}
+                        <img src="{{ r.car.photo_url }}" alt="">
+
                         <div>
                             <strong>{{ r.car.full_name }}</strong>
                             <div class="muted small">{{ r.car.number_plate }}</div>

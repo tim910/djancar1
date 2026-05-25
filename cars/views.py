@@ -84,7 +84,7 @@ def cars_api(request):
         'price_per_minute': float(c.tariff.price_per_minute),
         'price_per_hour': float(c.tariff.price_per_hour),
         'price_per_day': float(c.tariff.price_per_day),
-        'image': c.main_image.url if c.main_image else '',
+        'image': c.photo_url,
         'lat': float(c.latitude),
         'lng': float(c.longitude),
         'url': c.get_absolute_url(),

@@ -11,17 +11,11 @@
         <div class="car-detail-grid">
             <div class="car-gallery">
                 <div class="gallery-main">
-                    {% if car.main_image %}
-                        <img src="{{ car.main_image.url }}" alt="{{ car.full_name }}" id="galleryMain">
-                    {% else %}
-                        <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&q=80" id="galleryMain" alt="">
-                    {% endif %}
+                    <img src="{{ car.photo_url }}" alt="{{ car.full_name }}" id="galleryMain">
                     <span class="status-pill status-{{ car.status }}">{{ car.get_status_display }}</span>
                 </div>
                 <div class="gallery-thumbs">
-                    {% if car.main_image %}
-                        <img src="{{ car.main_image.url }}" onclick="document.getElementById('galleryMain').src=this.src" class="thumb-active">
-                    {% endif %}
+                    <img src="{{ car.photo_url }}" onclick="document.getElementById('galleryMain').src=this.src" class="thumb-active">
                     {% for img in car.images.all %}
                         <img src="{{ img.image.url }}" onclick="document.getElementById('galleryMain').src=this.src">
                     {% endfor %}
