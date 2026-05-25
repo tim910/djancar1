@@ -565,6 +565,19 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
     gap: 18px;
     color: var(--text);
 }
+.preloader-wheel {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    animation: wheelSpin 2.2s linear infinite;
+    filter: drop-shadow(0 8px 24px rgba(255,107,53,0.35));
+    margin-bottom: 10px;
+}
+@keyframes wheelSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .preloader-logo {
     display: flex;
     align-items: center;

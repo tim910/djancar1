@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}О компании — {{ SITE_NAME }}{% endblock %}
 
@@ -43,25 +44,26 @@
 <section class="section">
     <div class="container">
         <div class="section-head"><h2>Команда</h2></div>
+    
         <div class="team-grid">
             <div class="team-card">
-                <img src="https://i.pravatar.cc/200?img=15">
-                <h3>Тимур Джанбеков</h3>
+               <img src="{% static 'images/zakharov.jpg' %}" alt="Захаров Богдан">
+                <h3>Захаров Богдан</h3>
                 <p class="muted">CEO, основатель</p>
             </div>
             <div class="team-card">
-                <img src="https://i.pravatar.cc/200?img=23">
-                <h3>Анна Седова</h3>
+                <img src="https://i.pravatar.cc/200?img=23" alt="Урмеев Тимур">
+                <h3>Урмеев Тимур</h3>
                 <p class="muted">CTO</p>
             </div>
             <div class="team-card">
-                <img src="https://i.pravatar.cc/200?img=51">
-                <h3>Михаил Кузнецов</h3>
+                <img src="{% static 'images/gus.jpg' %}" alt="Гусев Иван">
+                <h3>Гусев Иван</h3>
                 <p class="muted">Главный механик</p>
             </div>
             <div class="team-card">
-                <img src="https://i.pravatar.cc/200?img=44">
-                <h3>Ольга Петрова</h3>
+                <img src="{% static 'images/kuzin.jpg' %}" >
+                <h3>Кузин Степан</h3>
                 <p class="muted">Руководитель поддержки</p>
             </div>
         </div>
