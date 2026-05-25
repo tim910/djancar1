@@ -18,4 +18,7 @@ python manage.py migrate --no-input
 echo "==> Loading demo data (idempotent)..."
 python manage.py seed_demo || echo "seed_demo skipped"
 
+echo "==> Fixing car image_filenames for existing cars..."
+python manage.py fix_car_images || echo "fix_car_images skipped"
+
 echo "==> Build complete!"

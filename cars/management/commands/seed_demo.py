@@ -11,7 +11,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
-from cars.models import Car, Tariff, CarReview
+from cars.models import Car, Tariff, CarReview, STATIC_CAR_IMAGES
 from rentals.models import PromoCode
 from core.models import SiteReview
 
@@ -48,6 +48,8 @@ CARS_DATA = [
      'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80'),
     ('Renault', 'Logan', 2022, 'Бежевый', 'А005АА73', 'economy', 'petrol', 'auto', 5, 1.6, 102,
      'https://images.unsplash.com/photo-1568844293986-8d0400bd4745?w=800&q=80'),
+    ('Datsun', 'on-DO', 2022, 'Серый', 'А006АА73', 'economy', 'petrol', 'manual', 5, 1.6, 87,
+     'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80'),
     ('Volkswagen', 'Polo', 2023, 'Красный', 'А101АА73', 'comfort', 'petrol', 'auto', 5, 1.6, 110,
      'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80'),
     ('Skoda', 'Octavia', 2024, 'Серый', 'А102АА73', 'comfort', 'petrol', 'auto', 5, 1.8, 180,
@@ -58,6 +60,8 @@ CARS_DATA = [
      'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&q=80'),
     ('Mazda', '6', 2023, 'Красный', 'А105АА73', 'comfort', 'petrol', 'auto', 5, 2.5, 192,
      'https://images.unsplash.com/photo-1547744822-0aa1ed2cd9a5?w=800&q=80'),
+    ('Kia', 'Optima', 2023, 'Белый', 'А106АА73', 'comfort', 'petrol', 'auto', 5, 2.0, 150,
+     'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&q=80'),
     ('Hyundai', 'Creta', 2024, 'Белый', 'А201АА73', 'suv', 'petrol', 'auto', 5, 1.6, 123,
      'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800&q=80'),
     ('Kia', 'Sportage', 2024, 'Серый', 'А202АА73', 'suv', 'petrol', 'auto', 5, 2.0, 150,
@@ -144,14 +148,20 @@ class Command(BaseCommand):
         spawn_points = [(lat, lng) for _, _, lat, lng, _, _ in ULYANOVSK_ZONES]
         cars_created = 0
         for data in CARS_DATA:
-            brand, model, year, color, plate, klass, fuel, trans, seats, eng, hp, img = data
+            brand, model, year, color, plate, klass, fuel, trans, seats, eng, hp, _ = data
             if Car.objects.filter(number_plate=plate).exists():
                 continue
             base_lat, base_lng = random.choice(spawn_points)
             lat = base_lat + random.uniform(-0.008, 0.008)
             lng = base_lng + random.uniform(-0.008, 0.008)
 
-            car = Car.objects.create(
+            # Достаём имя файла из словаря STATIC_CAR_IMAGES автоматически
+            full_name = f'{brand} {model}'
+            static_path = STATIC_CAR_IMAGES.get(full_name, '')
+            # static_path формата 'images/Rio.webp' → выдираем только 'Rio.webp'
+            img_filename = static_path.split('/', 1)[1] if '/' in static_path else ''
+
+            Car.objects.create(
                 brand=brand, model=model, year=year, color=color,
                 number_plate=plate, car_class=klass, fuel_type=fuel,
                 transmission=trans, seats=seats,
@@ -167,11 +177,11 @@ class Command(BaseCommand):
                 tariff=tariff_map[klass],
                 latitude=Decimal(str(round(lat, 6))),
                 longitude=Decimal(str(round(lng, 6))),
+                image_filename=img_filename,
                 description=f'{brand} {model} {year} года — {color.lower()}. Современный автомобиль в идеальном состоянии.',
                 rating=Decimal(str(round(random.uniform(4.3, 5.0), 2))),
                 rentals_count=random.randint(20, 350),
             )
-            car._external_image = img
             cars_created += 1
         self.stdout.write(self.style.SUCCESS(f'  ✓ {cars_created} автомобилей'))
 

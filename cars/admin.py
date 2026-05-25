@@ -31,8 +31,10 @@ class CarAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('📸 Фотография', {
-            'fields': ('main_image', 'main_image_preview'),
-            'description': 'Загрузите главное фото авто. После сохранения добавьте дополнительные фото внизу страницы.',
+            'fields': ('image_filename', 'main_image', 'main_image_preview'),
+            'description': 'РЕКОМЕНДУЕТСЯ: впишите имя файла из static/images/ '
+                           '(например "optima.jpg") — это работает и на Render. '
+                           'Загрузка через "Главное фото" работает только локально.',
         }),
         ('🚗 Основное', {
             'fields': ('brand', 'model', 'year', 'color',

@@ -147,7 +147,14 @@ class Car(models.Model):
     latitude = models.DecimalField('Широта', max_digits=9, decimal_places=6)
     longitude = models.DecimalField('Долгота', max_digits=9, decimal_places=6)
 
-    main_image = models.ImageField('Главное фото', upload_to='cars/', blank=True, null=True)
+    main_image = models.ImageField('Главное фото (загрузить)', upload_to='cars/', blank=True, null=True)
+    image_filename = models.CharField(
+        'Имя файла в static/images/',
+        max_length=200, blank=True,
+        help_text='Например: optima.jpg или Kia Sportage.jpg. '
+                  'Используется когда нет загруженного фото. '
+                  'Файл сначала залей в папку static/images/ через GitHub.'
+    )
     description = models.TextField('Описание', blank=True)
     rating = models.DecimalField('Рейтинг', max_digits=3, decimal_places=2, default=5.00)
     rentals_count = models.PositiveIntegerField('Кол-во аренд', default=0)
@@ -172,15 +179,24 @@ class Car(models.Model):
 
     @property
     def photo_url(self):
-        """URL картинки: загруженная (admin) → static fallback → внешняя заглушка."""
+        """URL картинки: image_filename (поле в админке) → загруженная → fallback dict → заглушка."""
+        # 1. Имя файла из админки (главный путь)
+        if self.image_filename:
+            try:
+                return static(f'images/{self.image_filename}')
+            except Exception:
+                pass
+        # 2. Загруженное фото (на Render free не работает — media ephemeral)
         if self.main_image:
             try:
                 return self.main_image.url
             except Exception:
                 pass
+        # 3. Fallback из словаря STATIC_CAR_IMAGES
         static_url = get_static_car_image(self.full_name)
         if static_url:
             return static_url
+        # 4. Заглушка
         return 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
 
     @property
