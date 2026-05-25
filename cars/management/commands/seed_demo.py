@@ -90,6 +90,74 @@ CARS_DATA = [
      'https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?w=800&q=80'),
     ('BMW', 'X7', 2024, 'Белый', 'А503АА73', 'premium', 'petrol', 'auto', 7, 3.0, 340,
      'https://images.unsplash.com/photo-1607853554439-0069ec0f29b6?w=800&q=80'),
+
+    # === ЭКОНОМ — дополнительно ===
+    ('LADA', 'Largus', 2023, 'Белый', 'А007АА73', 'economy', 'petrol', 'manual', 7, 1.6, 106,
+     'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80'),
+    ('Chery', 'Tiggo 4', 2024, 'Серый', 'А008АА73', 'economy', 'petrol', 'auto', 5, 1.5, 113,
+     'https://images.unsplash.com/photo-1568844293986-8d0400bd4745?w=800&q=80'),
+    ('Haval', 'Jolion', 2023, 'Синий', 'А009АА73', 'economy', 'petrol', 'auto', 5, 1.5, 143,
+     'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80'),
+
+    # === КОМФОРТ — дополнительно ===
+    ('Hyundai', 'Sonata', 2024, 'Чёрный', 'А107АА73', 'comfort', 'petrol', 'auto', 5, 2.5, 180,
+     'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80'),
+    ('Volkswagen', 'Passat', 2023, 'Серебристый', 'А108АА73', 'comfort', 'petrol', 'auto', 5, 1.8, 180,
+     'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800&q=80'),
+    ('Honda', 'Accord', 2023, 'Синий', 'А109АА73', 'comfort', 'petrol', 'auto', 5, 2.0, 192,
+     'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80'),
+
+    # === КРОССОВЕР — дополнительно ===
+    ('Toyota', 'RAV4', 2024, 'Белый', 'А206АА73', 'suv', 'petrol', 'auto', 5, 2.5, 199,
+     'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'),
+    ('Mazda', 'CX-5', 2024, 'Красный', 'А207АА73', 'suv', 'petrol', 'auto', 5, 2.5, 194,
+     'https://images.unsplash.com/photo-1547744822-0aa1ed2cd9a5?w=800&q=80'),
+    ('Lada', 'Niva Travel', 2023, 'Зелёный', 'А208АА73', 'suv', 'petrol', 'manual', 5, 1.7, 80,
+     'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80'),
+
+    # === БИЗНЕС — дополнительно ===
+    ('Lexus', 'ES', 2024, 'Чёрный', 'А304АА73', 'business', 'petrol', 'auto', 5, 2.5, 200,
+     'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80'),
+    ('Genesis', 'G80', 2024, 'Серебристый', 'А305АА73', 'business', 'petrol', 'auto', 5, 2.5, 304,
+     'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80'),
+
+    # === ЭЛЕКТРО — дополнительно ===
+    ('BYD', 'Han', 2024, 'Синий', 'А404АА73', 'electro', 'electric', 'auto', 5, 0.0, 245,
+     'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80'),
+    ('Voyah', 'Free', 2024, 'Белый', 'А405АА73', 'electro', 'electric', 'auto', 5, 0.0, 503,
+     'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80'),
+    ('Zeekr', '001', 2024, 'Серый', 'А406АА73', 'electro', 'electric', 'auto', 5, 0.0, 400,
+     'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&q=80'),
+
+    # === ПРЕМИУМ — дополнительно ===
+    ('Bentley', 'Continental', 2023, 'Чёрный', 'А504АА73', 'premium', 'petrol', 'auto', 4, 6.0, 626,
+     'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&q=80'),
+    ('Range Rover', 'Sport', 2024, 'Чёрный', 'А505АА73', 'premium', 'diesel', 'auto', 5, 3.0, 350,
+     'https://images.unsplash.com/photo-1606152421802-db97b9c7a11b?w=800&q=80'),
+
+    # === КАБРИОЛЕТЫ ===
+    ('BMW', 'Z4', 2024, 'Красный', 'А601АА73', 'cabrio', 'petrol', 'auto', 2, 3.0, 340,
+     'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'),
+    ('Mazda', 'MX-5', 2023, 'Жёлтый', 'А602АА73', 'cabrio', 'petrol', 'manual', 2, 2.0, 184,
+     'https://images.unsplash.com/photo-1547744822-0aa1ed2cd9a5?w=800&q=80'),
+    ('Mercedes-Benz', 'SLK', 2023, 'Серебристый', 'А603АА73', 'cabrio', 'petrol', 'auto', 2, 2.0, 245,
+     'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80'),
+
+    # === МИНИВЭНЫ ===
+    ('Toyota', 'Alphard', 2024, 'Чёрный', 'А701АА73', 'van', 'petrol', 'auto', 7, 2.5, 182,
+     'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'),
+    ('Mercedes-Benz', 'V-Class', 2024, 'Серебристый', 'А702АА73', 'van', 'diesel', 'auto', 8, 2.0, 190,
+     'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80'),
+    ('Volkswagen', 'Multivan', 2023, 'Синий', 'А703АА73', 'van', 'diesel', 'auto', 7, 2.0, 150,
+     'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80'),
+
+    # === ГРУЗОВЫЕ (ГАЗель) ===
+    ('ГАЗ', 'ГАЗель Next', 2023, 'Белый', 'А801АА73', 'truck', 'diesel', 'manual', 3, 2.8, 149,
+     'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=80'),
+    ('ГАЗ', 'ГАЗель Бизнес', 2022, 'Белый', 'А802АА73', 'truck', 'petrol', 'manual', 3, 2.7, 107,
+     'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=80'),
+    ('ГАЗ', 'Соболь Бизнес', 2023, 'Серый', 'А803АА73', 'truck', 'petrol', 'manual', 7, 2.7, 107,
+     'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&q=80'),
 ]
 
 
@@ -132,6 +200,30 @@ class Command(BaseCommand):
                 'price_per_day': Decimal('2490.00'),
                 'free_kilometers': 250,
             })
+        tariff_cabrio, _ = Tariff.objects.get_or_create(
+            name='Кабриолет', defaults={
+                'description': 'Для романтических поездок и фотосессий',
+                'price_per_minute': Decimal('28.00'),
+                'price_per_hour': Decimal('1190.00'),
+                'price_per_day': Decimal('8990.00'),
+                'free_kilometers': 200,
+            })
+        tariff_van, _ = Tariff.objects.get_or_create(
+            name='Минивэн', defaults={
+                'description': 'Для большой компании или семьи (7-8 мест)',
+                'price_per_minute': Decimal('18.00'),
+                'price_per_hour': Decimal('690.00'),
+                'price_per_day': Decimal('4990.00'),
+                'free_kilometers': 300,
+            })
+        tariff_truck, _ = Tariff.objects.get_or_create(
+            name='Грузовой', defaults={
+                'description': 'ГАЗели для переездов и перевозок',
+                'price_per_minute': Decimal('15.00'),
+                'price_per_hour': Decimal('590.00'),
+                'price_per_day': Decimal('3990.00'),
+                'free_kilometers': 250,
+            })
         self.stdout.write(self.style.SUCCESS('  ✓ Тарифы созданы'))
 
         tariff_map = {
@@ -141,6 +233,9 @@ class Command(BaseCommand):
             'suv': tariff_comfort,
             'electro': tariff_electro,
             'premium': tariff_business,
+            'cabrio': tariff_cabrio,
+            'van': tariff_van,
+            'truck': tariff_truck,
         }
 
         # 2. Автомобили — разбрасываем по Ульяновску в случайных точках

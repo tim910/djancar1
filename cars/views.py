@@ -1,8 +1,11 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
+from django.core.management import call_command
+from io import StringIO
 
 from .models import Car, CarReview, CarClass, FuelType, Transmission
 
@@ -95,6 +98,25 @@ def cars_api(request):
     } for c in qs]
 
     return JsonResponse({'cars': data, 'count': len(data)})
+
+
+@csrf_exempt
+def cron_record_positions(request):
+    """
+    Endpoint для cron-сервиса (UptimeRobot/Cron-job.org).
+    Пингуй раз в 5-10 минут чтоб обновлять GPS-снимки.
+    """
+    buf = StringIO()
+    call_command('record_positions', stdout=buf)
+    return HttpResponse(buf.getvalue(), content_type='text/plain')
+
+
+@csrf_exempt
+def cron_cleanup_pings(request):
+    """Endpoint для ежедневной очистки старых GPS-снимков."""
+    buf = StringIO()
+    call_command('cleanup_pings', stdout=buf)
+    return HttpResponse(buf.getvalue(), content_type='text/plain')
 
 
 @login_required

@@ -31,6 +31,8 @@ STATIC_CAR_IMAGES = {
     'BMW X7': 'images/BMW X7.jpg',
     'Kia Optima': 'images/optima.jpg',
     'Datsun on-DO': 'images/датсун он до.webp',
+    # Новые: кабриолеты, минивэны, грузовые — пока без локальных фото,
+    # подхватятся внешние URL из Unsplash через placeholder в template
 }
 
 
@@ -52,6 +54,9 @@ class CarClass(models.TextChoices):
     SUV = 'suv', 'Кроссовер'
     ELECTRO = 'electro', 'Электрокар'
     PREMIUM = 'premium', 'Премиум'
+    CABRIO = 'cabrio', 'Кабриолет'
+    VAN = 'van', 'Минивэн'
+    TRUCK = 'truck', 'Грузовой'
 
 
 class FuelType(models.TextChoices):
@@ -242,6 +247,34 @@ class CarImage(models.Model):
 
     def __str__(self):
         return f'Фото {self.car} #{self.order}'
+
+
+class LocationPing(models.Model):
+    """
+    GPS-снимок позиции автомобиля.
+    Создаётся cron-таской каждые 5-10 минут для всех активных аренд.
+    Хранится 7 дней, затем удаляется командой cleanup_pings.
+    """
+
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='pings')
+    rental = models.ForeignKey('rentals.Rental', on_delete=models.SET_NULL,
+                                null=True, blank=True, related_name='pings')
+    latitude = models.DecimalField('Широта', max_digits=9, decimal_places=6)
+    longitude = models.DecimalField('Долгота', max_digits=9, decimal_places=6)
+    speed_kmh = models.PositiveSmallIntegerField('Скорость, км/ч', default=0)
+    fuel_level = models.PositiveSmallIntegerField('Топливо/заряд, %', default=100)
+    recorded_at = models.DateTimeField('Время снимка', auto_now_add=True, db_index=True)
+
+    class Meta:
+        verbose_name = 'GPS-снимок'
+        verbose_name_plural = 'GPS-снимки (трекинг)'
+        ordering = ('-recorded_at',)
+        indexes = [
+            models.Index(fields=['car', '-recorded_at']),
+        ]
+
+    def __str__(self):
+        return f'{self.car} @ {self.recorded_at:%d.%m %H:%M} ({self.latitude}, {self.longitude})'
 
 
 class CarReview(models.Model):

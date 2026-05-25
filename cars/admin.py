@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Car, CarImage, CarReview, Tariff
+from .models import Car, CarImage, CarReview, Tariff, LocationPing
 
 
 class CarImageInline(admin.TabularInline):
@@ -91,6 +91,16 @@ class CarAdmin(admin.ModelAdmin):
 class TariffAdmin(admin.ModelAdmin):
     list_display = ('name', 'price_per_minute', 'price_per_hour', 'price_per_day', 'is_active')
     list_filter = ('is_active',)
+
+
+@admin.register(LocationPing)
+class LocationPingAdmin(admin.ModelAdmin):
+    list_display = ('car', 'latitude', 'longitude', 'speed_kmh', 'fuel_level', 'recorded_at')
+    list_filter = ('recorded_at',)
+    search_fields = ('car__brand', 'car__model', 'car__number_plate')
+    date_hierarchy = 'recorded_at'
+    readonly_fields = ('car', 'rental', 'latitude', 'longitude', 'speed_kmh',
+                       'fuel_level', 'recorded_at')
 
 
 @admin.register(CarReview)
