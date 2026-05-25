@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.db.models import Count, Avg
 from cars.models import Car, CarStatus, Tariff, CarClass
+from rentals.models import Rental
 from .models import SiteReview
+
+User = get_user_model()
 
 
 def home(request):
@@ -23,12 +27,13 @@ def home(request):
         return redirect('core:home')
 
     available_cars = Car.objects.filter(status=CarStatus.AVAILABLE).select_related('tariff')
-    featured_cars = available_cars.order_by('-rating')[:6]
+    featured_cars = available_cars.order_by('-rating')[:8]
 
     stats = {
         'cars_total': Car.objects.count(),
         'cars_available': available_cars.count(),
-        'happy_clients': 5800,
+        'happy_clients': User.objects.filter(is_active=True, is_staff=False).count(),
+        'rentals_total': Rental.objects.count(),
         'reviews_count': SiteReview.objects.filter(is_published=True).count(),
     }
 
