@@ -47,7 +47,7 @@
                 <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Войти</a>
                 <a href="{% url 'accounts:register' %}" class="btn btn-primary">Регистрация</a>
             {% endif %}
-            <button class="burger" aria-label="Меню" onclick="document.body.classList.toggle('menu-open')">☰</button>
+            <button class="burger" aria-label="Меню" onclick="toggleMenu(event)">☰</button>
         </div>
     </div>
 </header>
