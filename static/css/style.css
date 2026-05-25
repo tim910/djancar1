@@ -1212,7 +1212,6 @@ img { max-width: 100%; display: block; }
     .logo { font-size: 1.25rem; gap: 6px; }
     .logo-mark { font-size: 1.4rem; }
     .logo-city { display: none; }
-    .main-nav { display: none; }
     .burger {
         display: flex;
         align-items: center;
@@ -1226,46 +1225,67 @@ img { max-width: 100%; display: block; }
     }
     .burger:active { background: #e0e2e8; }
 
-    /* Боковое меню — выдвижное справа */
-    .menu-open .main-nav {
-        display: flex;
+    /* Боковое меню — полноэкранный drawer справа */
+    .main-nav {
+        display: flex !important;
         flex-direction: column;
+        gap: 6px;
         position: fixed;
-        top: 64px;
+        top: 0;
         right: 0;
         bottom: 0;
-        width: min(85vw, 320px);
+        width: min(85vw, 340px);
         background: white;
-        padding: 24px 18px;
+        padding: 80px 20px 24px;
+        padding-top: calc(80px + env(safe-area-inset-top));
         box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-        z-index: 100;
-        gap: 4px;
+        z-index: 200;
         overflow-y: auto;
-        animation: slideInRight 0.25s ease-out;
+        transform: translateX(100%);
+        transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+        -webkit-overflow-scrolling: touch;
     }
-    .menu-open .main-nav a {
+    .menu-open .main-nav {
+        transform: translateX(0);
+    }
+    .main-nav a {
+        display: block !important;
+        width: 100%;
         padding: 14px 16px;
         border-radius: 12px;
-        font-size: 1rem;
+        font-size: 1.05rem;
         font-weight: 600;
+        color: var(--text);
+        background: transparent;
+        text-align: left;
+        border: 1px solid transparent;
     }
-    /* Подложка позади открытого меню */
-    .menu-open::after {
+    .main-nav a:active {
+        background: var(--bg-grey);
+        border-color: var(--primary);
+    }
+    /* Подложка */
+    .menu-open::before {
         content: '';
         position: fixed;
-        inset: 64px 0 0 0;
-        background: rgba(0,0,0,0.4);
-        z-index: 99;
-        animation: fadeBg 0.2s ease-out;
-    }
-    @keyframes slideInRight {
-        from { transform: translateX(100%); }
-        to { transform: translateX(0); }
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 150;
+        animation: fadeBg 0.25s ease-out;
     }
     @keyframes fadeBg {
         from { opacity: 0; }
         to { opacity: 1; }
     }
+    /* Бургер всегда поверх меню */
+    .burger {
+        position: relative;
+        z-index: 250;
+    }
+    /* Блокируем скролл на body при открытом меню */
+    body.menu-open { overflow: hidden; }
 
     /* Профиль-чип в шапке: только аватар */
     .profile-name, .profile-balance { display: none; }
