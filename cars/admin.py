@@ -1,39 +1,75 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Car, CarImage, CarReview, Tariff, ParkingZone
+from .models import Car, CarImage, CarReview, Tariff
 
 
 class CarImageInline(admin.TabularInline):
     model = CarImage
-    extra = 1
+    extra = 2
+    fields = ('image', 'caption', 'order', 'preview')
+    readonly_fields = ('preview',)
+
+    def preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:80px;border-radius:8px;object-fit:cover"/>',
+                obj.image.url
+            )
+        return '—'
+    preview.short_description = 'Предпросмотр'
 
 
 @admin.register(Car)
 class CarAdmin(admin.ModelAdmin):
     list_display = ('thumb', 'full_name', 'number_plate', 'car_class',
-                    'status_badge', 'fuel_level', 'tariff', 'current_zone')
+                    'status_badge', 'fuel_level', 'tariff')
     list_filter = ('status', 'car_class', 'fuel_type', 'transmission', 'tariff')
     search_fields = ('brand', 'model', 'number_plate', 'vin')
     inlines = [CarImageInline]
     list_editable = ('fuel_level',)
-    readonly_fields = ('rating', 'rentals_count', 'created_at', 'updated_at')
+    readonly_fields = ('rating', 'rentals_count', 'created_at', 'updated_at', 'main_image_preview')
 
     fieldsets = (
-        ('Основное', {'fields': ('brand', 'model', 'year', 'color',
-                                   'number_plate', 'vin', 'main_image', 'description')}),
-        ('Характеристики', {'fields': ('car_class', 'fuel_type', 'transmission',
-                                         'seats', 'engine_volume', 'power_hp',
-                                         'has_child_seat', 'has_winter_tires')}),
-        ('Состояние', {'fields': ('status', 'fuel_level', 'mileage',
-                                    'tariff', 'current_zone',
-                                    'latitude', 'longitude')}),
-        ('Статистика', {'fields': ('rating', 'rentals_count', 'created_at', 'updated_at')}),
+        ('📸 Фотография', {
+            'fields': ('main_image', 'main_image_preview'),
+            'description': 'Загрузите главное фото авто. После сохранения добавьте дополнительные фото внизу страницы.',
+        }),
+        ('🚗 Основное', {
+            'fields': ('brand', 'model', 'year', 'color',
+                       'number_plate', 'vin', 'description'),
+        }),
+        ('⚙️ Характеристики', {
+            'fields': ('car_class', 'fuel_type', 'transmission',
+                       'seats', 'engine_volume', 'power_hp',
+                       'has_child_seat', 'has_winter_tires'),
+        }),
+        ('📍 Состояние и местоположение', {
+            'fields': ('status', 'fuel_level', 'mileage',
+                       'tariff', 'latitude', 'longitude'),
+        }),
+        ('📊 Статистика', {
+            'fields': ('rating', 'rentals_count', 'created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
     )
+
+    def main_image_preview(self, obj):
+        if obj.main_image:
+            return format_html(
+                '<img src="{}" style="max-width:400px;max-height:280px;border-radius:12px;'
+                'box-shadow:0 4px 16px rgba(0,0,0,0.15)"/>',
+                obj.main_image.url
+            )
+        return format_html('<em style="color:#999">Загрузите фото и сохраните, чтобы увидеть превью</em>')
+    main_image_preview.short_description = 'Превью главного фото'
 
     def thumb(self, obj):
         if obj.main_image:
-            return format_html('<img src="{}" style="height:48px;border-radius:6px"/>', obj.main_image.url)
-        return '—'
+            return format_html(
+                '<img src="{}" style="height:56px;width:84px;object-fit:cover;border-radius:6px"/>',
+                obj.main_image.url
+            )
+        return format_html('<span style="color:#bbb;font-size:11px">нет фото</span>')
     thumb.short_description = 'Фото'
 
     def status_badge(self, obj):
@@ -51,15 +87,12 @@ class TariffAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
 
 
-@admin.register(ParkingZone)
-class ParkingZoneAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'capacity', 'has_charger', 'is_active')
-    list_filter = ('is_active', 'has_charger')
-    search_fields = ('name', 'address')
-
-
 @admin.register(CarReview)
 class CarReviewAdmin(admin.ModelAdmin):
-    list_display = ('car', 'user', 'rating', 'created_at')
+    list_display = ('car', 'user', 'rating', 'short_text', 'created_at')
     list_filter = ('rating',)
-    search_fields = ('car__brand', 'car__model', 'user__username')
+    search_fields = ('car__brand', 'car__model', 'user__username', 'text')
+
+    def short_text(self, obj):
+        return obj.text[:60] + '...' if len(obj.text) > 60 else obj.text
+    short_text.short_description = 'Отзыв'

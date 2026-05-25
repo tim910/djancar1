@@ -11,8 +11,9 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 
-from cars.models import Car, Tariff, ParkingZone, CarReview
+from cars.models import Car, Tariff, CarReview
 from rentals.models import PromoCode
+from core.models import SiteReview
 
 User = get_user_model()
 
@@ -138,27 +139,17 @@ class Command(BaseCommand):
             'premium': tariff_business,
         }
 
-        # 2. Парковочные зоны
-        zones = []
-        for name, address, lat, lng, cap, charger in ULYANOVSK_ZONES:
-            z, _ = ParkingZone.objects.get_or_create(
-                name=name,
-                defaults={
-                    'address': address, 'latitude': lat, 'longitude': lng,
-                    'capacity': cap, 'has_charger': charger,
-                })
-            zones.append(z)
-        self.stdout.write(self.style.SUCCESS(f'  ✓ {len(zones)} парковочных зон'))
-
-        # 3. Автомобили — разбрасываем по Ульяновску с лёгким случайным сдвигом
+        # 2. Автомобили — разбрасываем по Ульяновску в случайных точках
+        # Центральные точки города (без сущности ParkingZone)
+        spawn_points = [(lat, lng) for _, _, lat, lng, _, _ in ULYANOVSK_ZONES]
         cars_created = 0
         for data in CARS_DATA:
             brand, model, year, color, plate, klass, fuel, trans, seats, eng, hp, img = data
             if Car.objects.filter(number_plate=plate).exists():
                 continue
-            zone = random.choice(zones)
-            lat = float(zone.latitude) + random.uniform(-0.008, 0.008)
-            lng = float(zone.longitude) + random.uniform(-0.008, 0.008)
+            base_lat, base_lng = random.choice(spawn_points)
+            lat = base_lat + random.uniform(-0.008, 0.008)
+            lng = base_lng + random.uniform(-0.008, 0.008)
 
             car = Car.objects.create(
                 brand=brand, model=model, year=year, color=color,
@@ -174,14 +165,12 @@ class Command(BaseCommand):
                     weights=[5, 5, 5, 1, 1, 1]
                 )[0],
                 tariff=tariff_map[klass],
-                current_zone=zone,
                 latitude=Decimal(str(round(lat, 6))),
                 longitude=Decimal(str(round(lng, 6))),
                 description=f'{brand} {model} {year} года — {color.lower()}. Современный автомобиль в идеальном состоянии.',
                 rating=Decimal(str(round(random.uniform(4.3, 5.0), 2))),
                 rentals_count=random.randint(20, 350),
             )
-            # Сохраняем URL внешней картинки прямо в поле (для демо)
             car._external_image = img
             cars_created += 1
         self.stdout.write(self.style.SUCCESS(f'  ✓ {cars_created} автомобилей'))
@@ -221,7 +210,37 @@ class Command(BaseCommand):
             )
             self.stdout.write(self.style.SUCCESS('  ✓ Суперпользователь: admin / admin12345'))
 
-        # 6. Несколько отзывов
+        # 6. Несколько демо-пользователей с разными отзывами на главной
+        seed_users = [
+            ('alex_m',   'Алексей',  'Морозов',    '★★★★★', 'Каждое утро катаюсь до УлГУ. Дешевле такси и быстрее маршрутки. Авто всегда чистые, реально рекомендую!'),
+            ('maria_t',  'Мария',    'Тимофеева',  '★★★★★', 'Брала Hyundai Creta на выходные в Самару. Удобно, что нет ограничения по пробегу. Поддержка реально 24/7 — звонила ночью, ответили.'),
+            ('denis_k',  'Денис',    'Кравцов',    '★★★★★', 'Попробовал электрокар Evolute — тише, мягче, дешевле. Теперь только электрички в DjanCar.'),
+            ('olga_p',   'Ольга',    'Петрова',    '★★★★★', 'Удобный сайт, регистрация заняла 5 минут. Документы проверили быстро. Тариф «Эконом» для города идеален.'),
+            ('ivan_s',   'Иван',     'Соколов',    '★★★★☆', 'Хороший каршеринг, авто заправлены, чистые. Иногда зимой бывает не сразу видно ближайшую машину, но в целом норм.'),
+            ('elena_b',  'Елена',    'Бирюкова',   '★★★★★', 'Бронирую на работу каждый день — выходит дешевле такси. Приложение пока сырое, но сайт удобный.'),
+        ]
+        for uname, fname, lname, _, text in seed_users:
+            user, created = User.objects.get_or_create(
+                username=uname,
+                defaults={
+                    'first_name': fname, 'last_name': lname,
+                    'email': f'{uname}@example.com',
+                    'city': 'Ульяновск', 'balance': Decimal('500.00'),
+                    'driver_license_verified': True, 'passport_verified': True,
+                }
+            )
+            if created:
+                user.set_password('demo12345')
+                user.save()
+            SiteReview.objects.get_or_create(
+                user=user,
+                defaults={
+                    'rating': 5 if '★★★★★' in seed_users[0] else random.randint(4, 5),
+                    'text': text,
+                }
+            )
+
+        # CarReview — отзывы на конкретные авто
         demo_user = User.objects.filter(username='demo').first()
         if demo_user:
             for car in Car.objects.all()[:6]:

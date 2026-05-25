@@ -91,14 +91,12 @@
 {% endblock %}
 
 {% block extra_js %}
-{{ zones_data|json_script:"zones-data" }}
 <script>
 const CARS_API_URL = "{% url 'cars:api' %}";
 const YANDEX_KEY = "{{ YANDEX_MAPS_API_KEY|escapejs }}";
 </script>
 <script>
 const ULYANOVSK_CENTER = [54.317825, 48.402539];
-const PARKING_ZONES = JSON.parse(document.getElementById('zones-data').textContent);
 
 let map = null;
 let carObjects = [];
@@ -136,21 +134,6 @@ function initMap() {
             center: ULYANOVSK_CENTER,
             zoom: 12,
             controls: ['zoomControl', 'geolocationControl', 'fullscreenControl', 'typeSelector', 'searchControl']
-        });
-
-        // Парковочные зоны
-        PARKING_ZONES.forEach(function (z) {
-            const circle = new ymaps.Circle([[z.lat, z.lng], 280], {
-                balloonContent: '<strong>' + z.name + '</strong><br>' + z.address +
-                                (z.charger ? '<br>⚡ Зарядка для электрокаров' : ''),
-                hintContent: 'Парковочная зона: ' + z.name
-            }, {
-                fillColor: 'rgba(255,196,0,0.18)',
-                strokeColor: '#f5a800',
-                strokeWidth: 2,
-                strokeOpacity: 0.7
-            });
-            map.geoObjects.add(circle);
         });
 
         loadCars();

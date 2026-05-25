@@ -19,3 +19,23 @@ class FeedbackMessage(models.Model):
 
     def __str__(self):
         return f'{self.subject} от {self.name}'
+
+
+class SiteReview(models.Model):
+    """Отзыв о сервисе DjanCar (на главной странице)."""
+
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
+                             related_name='site_reviews', verbose_name='Пользователь')
+    rating = models.PositiveSmallIntegerField('Оценка', default=5)
+    text = models.TextField('Текст отзыва')
+    is_published = models.BooleanField('Опубликован', default=True,
+                                       help_text='Снимите галочку, чтобы скрыть отзыв с главной')
+    created_at = models.DateTimeField('Дата', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Отзыв о сервисе'
+        verbose_name_plural = 'Отзывы о сервисе (главная)'
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        return f'Отзыв {self.user} ({self.rating}★)'

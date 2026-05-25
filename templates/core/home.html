@@ -229,46 +229,61 @@
     </div>
 </section>
 
-<section class="section section-grey">
+<section class="section section-grey" id="reviews">
     <div class="container">
         <div class="section-head">
             <h2>Отзывы наших клиентов</h2>
-            <p class="muted">Что говорят те, кто уже пользуется DjanCar</p>
+            <p class="muted">Что говорят те, кто уже пользуется DjanCar
+                {% if stats.reviews_count %} · {{ stats.reviews_count }} отзыв{{ stats.reviews_count|pluralize:"ов" }}{% endif %}</p>
         </div>
+
+        {% if user.is_authenticated %}
+        <form method="post" action="#reviews" class="add-review-form">
+            {% csrf_token %}
+            <div class="review-form-row">
+                <strong>Поделитесь впечатлением о DjanCar</strong>
+                <div class="star-rating">
+                    <input type="radio" name="review_rating" value="5" id="r5" checked><label for="r5">★</label>
+                    <input type="radio" name="review_rating" value="4" id="r4"><label for="r4">★</label>
+                    <input type="radio" name="review_rating" value="3" id="r3"><label for="r3">★</label>
+                    <input type="radio" name="review_rating" value="2" id="r2"><label for="r2">★</label>
+                    <input type="radio" name="review_rating" value="1" id="r1"><label for="r1">★</label>
+                </div>
+            </div>
+            <textarea name="review_text" rows="3" placeholder="Расскажите, как прошла поездка, что понравилось..." required></textarea>
+            <button type="submit" class="btn btn-primary">Опубликовать отзыв</button>
+        </form>
+        {% else %}
+        <div class="add-review-prompt">
+            <span>Хочешь оставить отзыв?</span>
+            <a href="{% url 'accounts:login' %}?next={% url 'core:home' %}%23reviews" class="btn btn-primary btn-sm">Войти</a>
+        </div>
+        {% endif %}
+
         <div class="reviews-grid">
+            {% for r in reviews %}
             <div class="review">
-                <div class="review-stars">★★★★★</div>
-                <p>«Каждое утро катаюсь до УлГУ. Выходит дешевле такси и быстрее, чем маршрутка. Авто всегда чистые, рекомендую!»</p>
+                <div class="review-stars">
+                    {% for _ in "12345" %}{% if forloop.counter <= r.rating %}★{% else %}<span style="color:#ddd">★</span>{% endif %}{% endfor %}
+                </div>
+                <p>«{{ r.text }}»</p>
                 <div class="review-author">
-                    <img src="https://i.pravatar.cc/64?img=12" alt="">
+                    {% if r.user.avatar %}
+                        <img src="{{ r.user.avatar.url }}" alt="">
+                    {% else %}
+                        <span class="avatar-fallback">{{ r.user.first_name|default:r.user.username|first|upper }}</span>
+                    {% endif %}
                     <div>
-                        <strong>Алексей М.</strong>
-                        <div class="small muted">студент УлГУ</div>
+                        <strong>{{ r.user.first_name|default:r.user.username }}{% if r.user.last_name %} {{ r.user.last_name|first|upper }}.{% endif %}</strong>
+                        <div class="small muted">{{ r.created_at|date:"d.m.Y" }}</div>
                     </div>
                 </div>
             </div>
-            <div class="review">
-                <div class="review-stars">★★★★★</div>
-                <p>«Брала Hyundai Creta на выходные в Самару. Удобно, что нет ограничения по пробегу. И поддержка реально 24/7 — звонила ночью.»</p>
-                <div class="review-author">
-                    <img src="https://i.pravatar.cc/64?img=47" alt="">
-                    <div>
-                        <strong>Мария Т.</strong>
-                        <div class="small muted">маркетолог</div>
-                    </div>
-                </div>
+            {% empty %}
+            <div class="empty-state" style="grid-column: 1 / -1">
+                <p>Пока нет отзывов. Будь первым! 🚗</p>
             </div>
-            <div class="review">
-                <div class="review-stars">★★★★★</div>
-                <p>«Попробовал электрокар Evolute — тише, мягче, дешевле. Теперь только электрички в DjanCar. И в зону Засвияжья много авто всегда.»</p>
-                <div class="review-author">
-                    <img src="https://i.pravatar.cc/64?img=33" alt="">
-                    <div>
-                        <strong>Денис К.</strong>
-                        <div class="small muted">IT-специалист</div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </section>

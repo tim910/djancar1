@@ -1,18 +1,35 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.db.models import Count, Avg
-from cars.models import Car, CarStatus, ParkingZone, Tariff, CarClass
+from cars.models import Car, CarStatus, Tariff, CarClass
+from .models import SiteReview
 
 
 def home(request):
     """Главная страница."""
+    # Приём отзыва
+    if request.method == 'POST' and request.user.is_authenticated:
+        text = request.POST.get('review_text', '').strip()
+        try:
+            rating = int(request.POST.get('review_rating', 5))
+        except (ValueError, TypeError):
+            rating = 5
+        rating = max(1, min(5, rating))
+        if text:
+            SiteReview.objects.create(user=request.user, rating=rating, text=text)
+            messages.success(request, 'Спасибо за отзыв! Он опубликован на главной.')
+        else:
+            messages.error(request, 'Напишите текст отзыва')
+        return redirect('core:home')
+
     available_cars = Car.objects.filter(status=CarStatus.AVAILABLE).select_related('tariff')
     featured_cars = available_cars.order_by('-rating')[:6]
 
     stats = {
         'cars_total': Car.objects.count(),
         'cars_available': available_cars.count(),
-        'zones_total': ParkingZone.objects.filter(is_active=True).count(),
         'happy_clients': 5800,
+        'reviews_count': SiteReview.objects.filter(is_published=True).count(),
     }
 
     tariffs = Tariff.objects.filter(is_active=True)
@@ -20,28 +37,21 @@ def home(request):
                        .annotate(cnt=Count('id'), avg_price=Avg('tariff__price_per_minute'))
                        .order_by('car_class'))
 
+    reviews = (SiteReview.objects.filter(is_published=True)
+               .select_related('user')[:9])
+
     return render(request, 'core/home.html', {
         'featured_cars': featured_cars,
         'stats': stats,
         'tariffs': tariffs,
         'classes_summary': classes_summary,
+        'reviews': reviews,
     })
 
 
 def map_view(request):
     """Страница интерактивной карты."""
-    zones = ParkingZone.objects.filter(is_active=True)
-    zones_data = [{
-        'name': z.name,
-        'address': z.address,
-        'lat': float(z.latitude),
-        'lng': float(z.longitude),
-        'charger': z.has_charger,
-    } for z in zones]
-    return render(request, 'core/map.html', {
-        'zones': zones,
-        'zones_data': zones_data,
-    })
+    return render(request, 'core/map.html', {})
 
 
 def about(request):
