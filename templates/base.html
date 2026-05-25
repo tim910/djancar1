@@ -33,8 +33,11 @@
 <!-- Прелоадер -->
 <div class="preloader" id="preloader">
     <div class="preloader-inner">
-        <img class="preloader-wheel" src="{% static 'images/preloader.png' %}" alt="DjanCar">
-        <div class="preloader-text">Djan<span>Car</span></div>
+        <div class="preloader-logo">
+            <span class="preloader-mark">D</span>
+            <span class="preloader-name">jan<span class="preloader-accent">Car</span></span>
+        </div>
+        <div class="preloader-spinner"></div>
         <div class="preloader-sub">Каршеринг Ульяновска</div>
     </div>
 </div>
@@ -43,7 +46,7 @@
     <div class="container header-inner">
         <a href="{% url 'core:home' %}" class="logo">
             <span class="logo-mark">D</span>
-            <span class="logo-text">Djan<span class="logo-accent">Car</span></span>
+            <span class="logo-text">jan<span class="logo-accent">Car</span></span>
             <span class="logo-city">Ульяновск</span>
         </a>
 
@@ -135,7 +138,7 @@
             <div>
                 <div class="logo footer-logo">
                     <span class="logo-mark">D</span>
-                    <span class="logo-text">Djan<span class="logo-accent">Car</span></span>
+                    <span class="logo-text">jan<span class="logo-accent">Car</span></span>
                 </div>
                 <p class="muted">Современный каршеринг в Ульяновске. Бери авто за 30 секунд, езжай куда нужно — оставляй где удобно.</p>
             </div>
