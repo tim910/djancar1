@@ -9,10 +9,22 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+
+    <script>
+        // Применяем тему ДО рендера — чтоб не было мерцания
+        (function () {
+            try {
+                var saved = localStorage.getItem('djancar-theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                var theme = saved || (prefersDark ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {}
+        })();
+    </script>
 
     {% block extra_head %}{% endblock %}
 </head>
@@ -47,6 +59,10 @@
                 <a href="{% url 'accounts:login' %}" class="btn btn-ghost">Войти</a>
                 <a href="{% url 'accounts:register' %}" class="btn btn-primary">Регистрация</a>
             {% endif %}
+            <button class="theme-toggle" id="themeToggle" aria-label="Сменить тему" title="Сменить тему">
+                <span class="icon-moon">🌙</span>
+                <span class="icon-sun">☀️</span>
+            </button>
             <button class="burger" id="burgerBtn" aria-label="Меню">
                 <span></span><span></span><span></span>
             </button>
@@ -136,6 +152,63 @@
     </div>
 </footer>
 
+<script>
+    // Переключение темы — inline для гарантированной работы
+    (function () {
+        function bindTheme() {
+            var btn = document.getElementById('themeToggle');
+            if (!btn || btn._themeBound) return;
+            btn._themeBound = true;
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var cur = document.documentElement.getAttribute('data-theme') || 'light';
+                var next = cur === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                try { localStorage.setItem('djancar-theme', next); } catch (err) {}
+                console.log('[DjanCar] Тема:', next);
+            });
+            console.log('[DjanCar] Кнопка темы подключена');
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindTheme);
+        } else {
+            bindTheme();
+        }
+    })();
+</script>
+<script>
+    // Слайдер промо на главной — простая авто-ротация
+    (function () {
+        var slider = document.getElementById('promoSlider');
+        if (!slider) return;
+        var slides = slider.querySelectorAll('.slide');
+        var dotsBox = document.getElementById('sliderDots');
+        var idx = 0;
+        var timer;
+
+        slides.forEach(function (_, i) {
+            var dot = document.createElement('button');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', function () { goTo(i); });
+            dotsBox.appendChild(dot);
+        });
+
+        function goTo(n) {
+            slides[idx].classList.remove('active');
+            dotsBox.children[idx].classList.remove('active');
+            idx = (n + slides.length) % slides.length;
+            slides[idx].classList.add('active');
+            dotsBox.children[idx].classList.add('active');
+            resetTimer();
+        }
+        function resetTimer() {
+            clearInterval(timer);
+            timer = setInterval(function () { goTo(idx + 1); }, 5000);
+        }
+        window.slideTo = function (d) { goTo(idx + d); };
+        resetTimer();
+    })();
+</script>
 <script src="{% static 'js/main.js' %}"></script>
 {% block extra_js %}{% endblock %}
 </body>

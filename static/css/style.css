@@ -1,55 +1,130 @@
 /* ===== DjanCar — основной стиль ===== */
 :root {
+    /* Цвета бренда (одинаковы для обеих тем) */
     --primary: #FF6B35;
     --primary-dark: #E04E1A;
-    --secondary: #2D3047;
     --accent: #FFD23F;
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #3b82f6;
+    --gradient: linear-gradient(135deg, #FF6B35 0%, #FFD23F 100%);
+    --gradient-dark: linear-gradient(135deg, #2D3047 0%, #1A1B2E 100%);
+    --transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
+    --radius: 14px;
+    --radius-lg: 22px;
+
+    /* СВЕТЛАЯ ТЕМА (по умолчанию) */
     --bg: #FAFBFC;
     --bg-grey: #F4F5F9;
+    --bg-card: #FFFFFF;
     --bg-dark: #1A1B2E;
     --text: #1A1B2E;
     --text-muted: #6B7280;
     --border: #E5E7EB;
+    --header-bg: rgba(255,255,255,0.92);
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
     --shadow: 0 4px 16px rgba(0,0,0,0.08);
     --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
-    --radius: 14px;
-    --radius-lg: 22px;
-    --gradient: linear-gradient(135deg, #FF6B35 0%, #FFD23F 100%);
-    --gradient-dark: linear-gradient(135deg, #2D3047 0%, #1A1B2E 100%);
-    --transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
-    
 }
+
+/* ТЁМНАЯ ТЕМА — переопределяет цвета через атрибут на <html> */
+[data-theme="dark"] {
+    --bg: #0F1117;
+    --bg-grey: #1A1D26;
+    --bg-card: #1E222D;
+    --bg-dark: #0A0B11;
+    --text: #E8EAEF;
+    --text-muted: #9BA3B0;
+    --border: #2A2F3B;
+    --header-bg: rgba(15,17,23,0.88);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow: 0 4px 16px rgba(0,0,0,0.5);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
+}
+
+/* Тёмная: подкрашиваем белые фоны элементов */
+[data-theme="dark"] .car-card,
+[data-theme="dark"] .feature,
+[data-theme="dark"] .how-card,
+[data-theme="dark"] .review,
+[data-theme="dark"] .team-card,
+[data-theme="dark"] .contact-card,
+[data-theme="dark"] .faq-item,
+[data-theme="dark"] .dash-card,
+[data-theme="dark"] .rental-row,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .map-car-item,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .auth-form-wrap,
+[data-theme="dark"] .add-review-form,
+[data-theme="dark"] .add-review-prompt,
+[data-theme="dark"] .alert,
+[data-theme="dark"] .mobile-menu,
+[data-theme="dark"] .floating-card,
+[data-theme="dark"] .tariff-card.light {
+    background: var(--bg-card);
+}
+[data-theme="dark"] .map-sidebar { background: var(--bg-card); border-right-color: var(--border); }
+[data-theme="dark"] #mapBig { background: #1a1d26; }
+[data-theme="dark"] .input,
+[data-theme="dark"] .filters input,
+[data-theme="dark"] .filters select,
+[data-theme="dark"] .add-review-form textarea {
+    background: var(--bg-grey);
+    color: var(--text);
+    border-color: var(--border);
+}
+[data-theme="dark"] .input::placeholder { color: var(--text-muted); }
+[data-theme="dark"] .btn-outline { background: var(--bg-card); color: var(--text); border-color: var(--border); }
+[data-theme="dark"] .btn-outline:hover { background: var(--text); color: var(--bg); }
+[data-theme="dark"] .badge,
+[data-theme="dark"] .spec { background: var(--bg-grey); }
+[data-theme="dark"] .specs-grid,
+[data-theme="dark"] .bonus-row > div,
+[data-theme="dark"] .profile-balance-box,
+[data-theme="dark"] .rental-stats-grid { background: var(--bg-grey); }
+[data-theme="dark"] .verify { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+[data-theme="dark"] .verify.ok { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+[data-theme="dark"] .plate { background: rgba(255,210,63,0.15); color: var(--accent); border-color: rgba(255,210,63,0.3); }
+[data-theme="dark"] .balance-warning { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+[data-theme="dark"] .balance-warning strong { color: #fde047; }
+[data-theme="dark"] img { filter: brightness(0.92); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
 body {
-    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+    font-family: 'Onest', 'Manrope', system-ui, -apple-system, sans-serif;
     color: var(--text);
     background: var(--bg);
-    line-height: 1.6;
+    line-height: 1.55;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 main { flex: 1; }
 
 h1, h2, h3, h4 {
-    font-family: 'Unbounded', 'Manrope', sans-serif;
-    line-height: 1.2;
+    font-family: 'Unbounded', 'Onest', sans-serif;
+    line-height: 1.1;
     color: var(--text);
+    letter-spacing: -0.02em;
 }
 
-h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; }
-h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; margin-bottom: .8rem; }
-h3 { font-size: 1.25rem; font-weight: 700; }
+h1 { font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 900; }
+h2 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 800; margin-bottom: .8rem; }
+h3 { font-size: 1.3rem; font-weight: 700; }
+
+.hero-title {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+    line-height: 1.05;
+    font-weight: 900;
+}
 
 a { color: var(--primary); text-decoration: none; transition: var(--transition); }
 a:hover { color: var(--primary-dark); }
@@ -77,7 +152,7 @@ img { max-width: 100%; display: block; }
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(255,255,255,0.92);
+    background: var(--header-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
@@ -228,6 +303,27 @@ body.menu-open .site-header { z-index: 1100; }
     font-size: 0.85rem;
 }
 
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-grey);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    color: var(--text);
+    line-height: 1;
+}
+.theme-toggle:hover { background: var(--bg-card); transform: rotate(15deg); }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
 .burger {
     display: none;
     width: 44px;
@@ -348,6 +444,117 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
 .alert-danger { border-left-color: var(--danger); }
 .alert-info { border-left-color: var(--info); }
 
+/* ===== Promo Slider ===== */
+.promo-slider {
+    position: relative;
+    height: 360px;
+    overflow: hidden;
+    background: var(--bg-dark);
+}
+.promo-slider .slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.promo-slider .slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    display: flex;
+    align-items: center;
+}
+.promo-slider .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+}
+.promo-slider .slide.active {
+    opacity: 1;
+    z-index: 2;
+}
+.slide-inner {
+    position: relative;
+    z-index: 3;
+    color: white;
+}
+.slide-text { max-width: 540px; }
+.slide-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px);
+    border-radius: 100px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+.slide-text h2 {
+    color: white;
+    font-size: clamp(1.6rem, 4.2vw, 2.6rem);
+    margin-bottom: 10px;
+}
+.slide-text p {
+    color: rgba(255,255,255,0.92);
+    font-size: 1.05rem;
+    margin-bottom: 20px;
+    max-width: 460px;
+}
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 4;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4px;
+}
+.slider-arrow:hover { background: rgba(255,255,255,0.35); }
+.slider-arrow.prev { left: 20px; }
+.slider-arrow.next { right: 20px; }
+.slider-dots {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 4;
+}
+.slider-dots button {
+    width: 30px;
+    height: 4px;
+    border-radius: 4px;
+    border: none;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.slider-dots button.active { background: white; width: 50px; }
+
+@media (max-width: 768px) {
+    .promo-slider { height: 320px; }
+    .slider-arrow { width: 38px; height: 38px; font-size: 1.5rem; }
+    .slider-arrow.prev { left: 8px; }
+    .slider-arrow.next { right: 8px; }
+}
+
 /* ===== Hero ===== */
 .hero {
     position: relative;
@@ -424,14 +631,13 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
     display: flex;
     align-items: center;
     gap: 12px;
-    background: white;
+    background: var(--bg-card);
     padding: 14px 22px;
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
-    animation: float 4s ease-in-out infinite;
 }
 .card-1 { top: 20px; left: -20px; }
-.card-2 { bottom: 30px; right: -10px; animation-delay: 1s; }
+.card-2 { bottom: 30px; right: -10px; }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
 .dot-success { background: var(--success); }
 .dot-warning { background: var(--warning); }
@@ -636,12 +842,14 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
 .class-card p { opacity: 0.85; font-size: 0.9rem; margin-bottom: 16px; }
 .class-price { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 1.15rem; }
 
-.grad-economy { background: linear-gradient(135deg, #667eea, #764ba2); }
-.grad-comfort { background: linear-gradient(135deg, #f093fb, #f5576c); }
-.grad-suv { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-.grad-business { background: linear-gradient(135deg, #fa709a, #fee140); }
-.grad-electro { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-.grad-premium { background: linear-gradient(135deg, #30cfd0, #330867); }
+.grad-economy,
+.grad-comfort,
+.grad-suv,
+.grad-business,
+.grad-electro,
+.grad-premium {
+    background: var(--gradient);
+}
 
 /* ===== Tariffs ===== */
 .tariffs-grid {

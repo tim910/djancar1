@@ -183,7 +183,7 @@ function renderCars(data) {
 
         const balloon =
             (car.image ? '<img src="' + car.image + '" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px">' : '') +
-            '<div style="font-size:13px">🔋 <b>' + car.fuel_level + '%</b> · ⚙️ ' + car.transmission + ' · ⛽ ' + car.fuel_type + '</div>' +
+            '<div style="font-size:13px">' + car.fuel_icon + ' <b>' + car.fuel_level + '% ' + car.fuel_label + '</b> · ⚙️ ' + car.transmission + ' · ' + car.fuel_type + '</div>' +
             '<div style="font-size:13px;color:#666;margin:4px 0">📋 ' + car.plate + ' · ★ ' + car.rating + '</div>' +
             '<div style="margin:8px 0;font-size:18px;font-weight:700;color:#FF6B35">' + car.price_per_minute + ' ₽/мин</div>' +
             '<a href="' + car.url + '" style="display:inline-block;padding:8px 16px;background:#FF6B35;color:white;border-radius:8px;text-decoration:none;font-weight:600">Подробнее →</a>';
@@ -204,7 +204,7 @@ function renderCars(data) {
             (car.image ? '<img src="' + car.image + '" alt="">' : '<div class="ph"></div>') +
             '<div><strong>' + car.name + '</strong>' +
             '<div class="muted small">' + car.plate + ' · ' + car['class'] + '</div>' +
-            '<div class="small"><span style="color:' + color + '">●</span> ' + car.status_label + ' · 🔋 ' + car.fuel_level + '%</div>' +
+            '<div class="small"><span style="color:' + color + '">●</span> ' + car.status_label + ' · ' + car.fuel_icon + ' ' + car.fuel_level + '%</div>' +
             '</div><div class="map-car-price">' + car.price_per_minute + ' ₽<small>/мин</small></div></a>';
     });
 

@@ -18,7 +18,7 @@
         <div class="car-card-bottom">
             <div class="car-card-fuel">
                 <div class="fuel-bar"><span style="width: {{ car.fuel_level }}%"></span></div>
-                <span class="small muted">{{ car.fuel_level }}% топлива</span>
+                <span class="small muted">{{ car.fuel_icon }} {{ car.fuel_level }}% {{ car.fuel_label }}</span>
             </div>
             <div class="car-card-price">
                 <strong>{{ car.tariff.price_per_minute }}</strong> ₽/мин

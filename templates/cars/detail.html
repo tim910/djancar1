@@ -38,7 +38,7 @@
                     <div class="spec"><span>Двигатель</span><strong>{{ car.engine_volume }}л / {{ car.power_hp }} л.с.</strong></div>
                     <div class="spec"><span>Мест</span><strong>{{ car.seats }}</strong></div>
                     <div class="spec"><span>Цвет</span><strong>{{ car.color }}</strong></div>
-                    <div class="spec"><span>Топливо в баке</span><strong>{{ car.fuel_level }}%</strong></div>
+                    <div class="spec"><span>{% if car.is_electric %}Заряд батареи{% else %}Топливо в баке{% endif %}</span><strong>{{ car.fuel_icon }} {{ car.fuel_level }}%</strong></div>
                     <div class="spec"><span>Пробег</span><strong>{{ car.mileage }} км</strong></div>
                 </div>
 

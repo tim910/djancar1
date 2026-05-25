@@ -60,7 +60,17 @@ def map_view(request):
 
 
 def about(request):
-    return render(request, 'core/about.html')
+    avg_rating = Car.objects.aggregate(avg=Avg('rating'))['avg'] or 5
+    stats = {
+        'founded': 2024,
+        'cars_count': Car.objects.count(),
+        'clients_count': User.objects.filter(is_active=True, is_staff=False).count(),
+        'rentals_count': Rental.objects.count(),
+        'completed_rentals': Rental.objects.filter(status='completed').count(),
+        'reviews_count': SiteReview.objects.filter(is_published=True).count(),
+        'avg_rating': round(float(avg_rating), 1),
+    }
+    return render(request, 'core/about.html', {'stats': stats})
 
 
 def tariffs_page(request):

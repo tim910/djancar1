@@ -1,6 +1,7 @@
 // DjanCar — общий JS
 document.addEventListener('DOMContentLoaded', function () {
 
+
     // ===== БУРГЕР-МЕНЮ =====
     const burger = document.getElementById('burgerBtn');
     const backdrop = document.getElementById('mobileBackdrop');

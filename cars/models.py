@@ -178,6 +178,19 @@ class Car(models.Model):
         return f'{self.brand} {self.model}'
 
     @property
+    def is_electric(self):
+        return self.fuel_type == 'electric'
+
+    @property
+    def fuel_label(self):
+        """«заряда батареи» для электро, «топлива» для остальных."""
+        return 'заряда' if self.is_electric else 'топлива'
+
+    @property
+    def fuel_icon(self):
+        return '🔋' if self.is_electric else '⛽'
+
+    @property
     def photo_url(self):
         """URL картинки: image_filename (поле в админке) → загруженная → fallback dict → заглушка."""
         # 1. Имя файла из админки (главный путь)

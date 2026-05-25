@@ -29,12 +29,13 @@
             <h2>Цифры о нас</h2>
         </div>
         <div class="stats-bigs">
-            <div><div class="big-num">2024</div><div class="muted">год основания</div></div>
-            <div><div class="big-num">50+</div><div class="muted">авто в парке</div></div>
-         
-            <div><div class="big-num">5800</div><div class="muted">активных клиентов</div></div>
-            <div><div class="big-num">320 000</div><div class="muted">завершённых поездок</div></div>
-            <div><div class="big-num">4.9</div><div class="muted">средний рейтинг</div></div>
+            <div><div class="big-num">{{ stats.founded }}</div><div class="muted">год основания</div></div>
+            <div><div class="big-num">{{ stats.cars_count }}</div><div class="muted">авто в парке</div></div>
+            <div><div class="big-num">{{ stats.clients_count }}</div><div class="muted">зарегистрированных</div></div>
+            <div><div class="big-num">{{ stats.rentals_count }}</div><div class="muted">всего поездок</div></div>
+            <div><div class="big-num">{{ stats.completed_rentals }}</div><div class="muted">завершённых поездок</div></div>
+            <div><div class="big-num">{{ stats.reviews_count }}</div><div class="muted">отзывов</div></div>
+            <div><div class="big-num">{{ stats.avg_rating }}</div><div class="muted">средний рейтинг</div></div>
         </div>
     </div>
 </section>

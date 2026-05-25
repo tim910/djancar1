@@ -5,6 +5,44 @@
 
 {% block content %}
 
+<section class="promo-slider" id="promoSlider">
+    <div class="slides">
+        <div class="slide active" style="background-image:url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1600&q=80')">
+            <div class="container slide-inner">
+                <div class="slide-text">
+                    <span class="slide-tag">🔥 Промокод WELCOME30</span>
+                    <h2>Скидка 30% на первую поездку</h2>
+                    <p>Зарегистрируйся за 3 минуты и получи скидку. Никакой подписки.</p>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Активировать</a>
+                </div>
+            </div>
+        </div>
+        <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1600&q=80')">
+            <div class="container slide-inner">
+                <div class="slide-text">
+                    <span class="slide-tag">⚡ Электрокары</span>
+                    <h2>Tesla, Evolute, Москвич 3е</h2>
+                    <p>Тихо, экологично, на 25% дешевле бензиновых. Зарядка включена.</p>
+                    <a href="{% url 'cars:list' %}?fuel=electric" class="btn btn-primary btn-lg">Смотреть электро →</a>
+                </div>
+            </div>
+        </div>
+        <div class="slide" style="background-image:url('https://images.unsplash.com/photo-1542362567-b07e54358753?w=1600&q=80')">
+            <div class="container slide-inner">
+                <div class="slide-text">
+                    <span class="slide-tag">🎓 Студентам</span>
+                    <h2>Промокод STUDENT15 — минус 15%</h2>
+                    <p>Постоянная скидка для студентов УлГУ и УлГТУ. Просто введи промокод.</p>
+                    <a href="{% url 'cars:list' %}" class="btn btn-primary btn-lg">Выбрать авто</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="slider-arrow prev" onclick="slideTo(-1)" aria-label="Назад">‹</button>
+    <button class="slider-arrow next" onclick="slideTo(1)" aria-label="Вперёд">›</button>
+    <div class="slider-dots" id="sliderDots"></div>
+</section>
+
 <section class="hero">
     <div class="hero-bg-grid"></div>
     <div class="container hero-inner">
