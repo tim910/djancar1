@@ -1,69 +1,75 @@
 // DjanCar — общий JS
-(function () {
-    'use strict';
+document.addEventListener('DOMContentLoaded', function () {
 
-    // ===== Бургер-меню =====
-    window.toggleMenu = function (e) {
-        if (e) e.stopPropagation();
-        document.body.classList.toggle('menu-open');
-        const isOpen = document.body.classList.contains('menu-open');
-        // Иконка ☰ → ✕
-        const btn = document.querySelector('.burger');
-        if (btn) btn.textContent = isOpen ? '✕' : '☰';
-        // Блокируем скролл при открытом меню
-        document.body.style.overflow = isOpen ? 'hidden' : '';
-    };
+    // ===== БУРГЕР-МЕНЮ =====
+    const burger = document.getElementById('burgerBtn');
+    const backdrop = document.getElementById('mobileBackdrop');
+    const nav = document.getElementById('mainNav');
+    const body = document.body;
 
-    // Закрытие по клику на подложку (псевдоэлемент ::after на body)
-    document.addEventListener('click', function (e) {
-        if (!document.body.classList.contains('menu-open')) return;
-        // если клик не по меню и не по бургеру — закрыть
-        const isMenu = e.target.closest('.main-nav');
-        const isBurger = e.target.closest('.burger');
-        if (!isMenu && !isBurger) {
-            window.toggleMenu();
-        }
-    });
+    function openMenu() {
+        body.classList.add('menu-open');
+    }
+    function closeMenu() {
+        body.classList.remove('menu-open');
+    }
+    function toggleMenu() {
+        if (body.classList.contains('menu-open')) closeMenu();
+        else openMenu();
+    }
 
-    // Закрытие меню при клике на пункт
-    document.querySelectorAll('.main-nav a').forEach(a => {
-        a.addEventListener('click', () => {
-            if (document.body.classList.contains('menu-open')) {
-                window.toggleMenu();
-            }
+    if (burger) {
+        burger.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleMenu();
         });
-    });
-
+    }
+    if (backdrop) {
+        backdrop.addEventListener('click', closeMenu);
+    }
+    // Закрытие меню при тапе на пункт
+    if (nav) {
+        nav.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', closeMenu);
+        });
+    }
     // Закрытие по Escape
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && document.body.classList.contains('menu-open')) {
-            window.toggleMenu();
-        }
+        if (e.key === 'Escape') closeMenu();
+    });
+    // Закрытие при изменении размера окна (поворот, ресайз)
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 768) closeMenu();
     });
 
+
     // ===== Авто-закрытие алертов =====
-    setTimeout(() => {
-        document.querySelectorAll('.alert').forEach(a => {
+    setTimeout(function () {
+        document.querySelectorAll('.alert').forEach(function (a) {
             a.style.transition = 'opacity 0.4s';
             a.style.opacity = '0';
-            setTimeout(() => a.remove(), 500);
+            setTimeout(function () { a.remove(); }, 500);
         });
     }, 6000);
 
+
     // ===== Подсветка активного пункта меню =====
     const path = window.location.pathname;
-    document.querySelectorAll('.main-nav a').forEach(a => {
+    document.querySelectorAll('.main-nav a').forEach(function (a) {
         const href = a.getAttribute('href');
+        if (!href) return;
         if (href === path || (href !== '/' && path.startsWith(href))) {
             a.style.background = 'var(--bg-grey)';
             a.style.color = 'var(--primary)';
         }
     });
 
+
     // ===== Плавное появление при скролле =====
     if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => {
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
                 if (e.isIntersecting) {
                     e.target.style.opacity = '1';
                     e.target.style.transform = 'translateY(0)';
@@ -72,29 +78,11 @@
             });
         }, { threshold: 0.1 });
 
-        document.querySelectorAll('.section-head, .how-card, .feature, .review, .team-card').forEach(el => {
+        document.querySelectorAll('.section-head, .how-card, .feature, .review, .team-card').forEach(function (el) {
             el.style.opacity = '0';
             el.style.transform = 'translateY(30px)';
             el.style.transition = 'opacity 0.6s, transform 0.6s';
             observer.observe(el);
         });
     }
-
-    // ===== Свайп по краю экрана = открыть меню =====
-    let touchStartX = 0;
-    document.addEventListener('touchstart', e => {
-        touchStartX = e.touches[0].clientX;
-    }, { passive: true });
-    document.addEventListener('touchend', e => {
-        if (window.innerWidth > 768) return;
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const startedAtRightEdge = touchStartX > window.innerWidth - 30;
-        if (dx < -50 && startedAtRightEdge && !document.body.classList.contains('menu-open')) {
-            window.toggleMenu();
-        }
-        // Свайп вправо при открытом меню → закрыть
-        if (dx > 80 && document.body.classList.contains('menu-open')) {
-            window.toggleMenu();
-        }
-    }, { passive: true });
-})();
+});

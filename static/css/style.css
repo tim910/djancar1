@@ -166,11 +166,33 @@ img { max-width: 100%; display: block; }
 
 .burger {
     display: none;
-    background: none;
+    width: 44px;
+    height: 44px;
+    background: var(--bg-grey);
     border: none;
-    font-size: 1.7rem;
+    border-radius: 12px;
     cursor: pointer;
+    padding: 0;
+    position: relative;
 }
+.burger span {
+    position: absolute;
+    left: 11px;
+    width: 22px;
+    height: 2.5px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.25s, opacity 0.2s, top 0.25s;
+}
+.burger span:nth-child(1) { top: 14px; }
+.burger span:nth-child(2) { top: 21px; }
+.burger span:nth-child(3) { top: 28px; }
+body.menu-open .burger span:nth-child(1) { top: 21px; transform: rotate(45deg); }
+body.menu-open .burger span:nth-child(2) { opacity: 0; }
+body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+
+.mobile-only-nav { display: none; }
+.mobile-backdrop { display: none; }
 
 /* ===== Buttons ===== */
 .btn {
@@ -1207,95 +1229,100 @@ img { max-width: 100%; display: block; }
     h3 { font-size: 1.1rem; }
     .section-head { margin-bottom: 32px; }
 
-    /* Шапка с бургер-меню */
+    /* Шапка */
     .header-inner { padding: 12px 16px; height: 64px; gap: 12px; }
     .logo { font-size: 1.25rem; gap: 6px; }
     .logo-mark { font-size: 1.4rem; }
     .logo-city { display: none; }
+
+    /* Бургер показываем на мобильных */
     .burger {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        background: var(--bg-grey);
-        font-size: 1.4rem;
-        line-height: 1;
+        display: block;
+        position: relative;
+        z-index: 1001;
     }
     .burger:active { background: #e0e2e8; }
 
-    /* Боковое меню — полноэкранный drawer справа */
+    /* Мобильное меню — drawer справа */
     .main-nav {
-        display: flex !important;
-        flex-direction: column;
-        gap: 6px;
         position: fixed;
         top: 0;
         right: 0;
         bottom: 0;
-        width: min(85vw, 340px);
-        background: white;
-        padding: 80px 20px 24px;
-        padding-top: calc(80px + env(safe-area-inset-top));
-        box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-        z-index: 200;
+        width: 80%;
+        max-width: 320px;
+        background: #ffffff;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 80px 18px 30px;
+        box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+        z-index: 999;
         overflow-y: auto;
+        visibility: hidden;
+        opacity: 0;
         transform: translateX(100%);
-        transition: transform 0.28s cubic-bezier(.4,0,.2,1);
-        -webkit-overflow-scrolling: touch;
+        transition: transform 0.3s ease, opacity 0.2s ease, visibility 0.3s;
     }
-    .menu-open .main-nav {
+    body.menu-open .main-nav {
+        visibility: visible;
+        opacity: 1;
         transform: translateX(0);
     }
     .main-nav a {
-        display: block !important;
+        display: block;
         width: 100%;
-        padding: 14px 16px;
-        border-radius: 12px;
+        padding: 14px 18px;
+        border-radius: 10px;
         font-size: 1.05rem;
         font-weight: 600;
-        color: var(--text);
+        color: #1A1B2E;
         background: transparent;
         text-align: left;
-        border: 1px solid transparent;
     }
-    .main-nav a:active {
-        background: var(--bg-grey);
-        border-color: var(--primary);
+    .main-nav a:active { background: var(--bg-grey); }
+
+    /* Разделитель и доп.пункты внутри drawer */
+    .mobile-only-nav {
+        display: flex !important;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
     }
+    .mobile-only-nav a {
+        font-size: 1rem !important;
+        color: var(--text-muted) !important;
+    }
+
     /* Подложка */
-    .menu-open::before {
-        content: '';
+    .mobile-backdrop {
+        display: block;
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.5);
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-        z-index: 150;
-        animation: fadeBg 0.25s ease-out;
+        z-index: 998;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s, visibility 0.25s;
     }
-    @keyframes fadeBg {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    body.menu-open .mobile-backdrop {
+        opacity: 1;
+        visibility: visible;
     }
-    /* Бургер всегда поверх меню */
-    .burger {
-        position: relative;
-        z-index: 250;
-    }
-    /* Блокируем скролл на body при открытом меню */
+
     body.menu-open { overflow: hidden; }
 
-    /* Профиль-чип в шапке: только аватар */
+    /* Шапка: профиль-чип компактный */
     .profile-name, .profile-balance { display: none; }
     .profile-chip {
         padding: 4px;
         gap: 0;
         background: transparent;
     }
-    .header-actions .btn { padding: 9px 14px; font-size: 0.85rem; }
-    .header-actions .btn-ghost { display: none; }
+    .header-actions .btn { display: none; }
+    .header-actions { gap: 6px; }
 
     /* Hero */
     .hero { padding: 30px 0 50px; }
@@ -1442,8 +1469,6 @@ img { max-width: 100%; display: block; }
     h2 { font-size: clamp(1.3rem, 5.5vw, 1.8rem); }
 
     .header-inner { padding: 10px 14px; height: 60px; gap: 8px; }
-    .menu-open .main-nav { top: 60px; }
-    .menu-open::after { top: 60px; }
     .logo { font-size: 1.1rem; }
     .logo-mark { font-size: 1.2rem; }
 
@@ -1519,7 +1544,6 @@ img { max-width: 100%; display: block; }
     .hero { padding: 20px 0 30px; }
     .auth-side { display: none; }
     #mapBig { height: 80vh; }
-    .menu-open .main-nav { top: 56px; max-height: calc(100vh - 56px); }
 }
 
 /* ===== Поддержка тёмной темы системы — будущее улучшение ===== */
