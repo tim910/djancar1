@@ -1,0 +1,76 @@
+===================================================
+   DjanCar - carsharing in Ulyanovsk
+===================================================
+
+QUICK START:
+
+  Just double-click DjanCar.bat
+
+  It will:
+   1) Check Python
+   2) Create venv if needed
+   3) Install dependencies if needed
+   4) Create .env if needed
+   5) Check PostgreSQL connection
+   6) Create "djancar" database
+   7) Run migrations and load demo data
+   8) Start the server and open browser
+
+
+===================================================
+   PREREQUISITES
+===================================================
+
+  1. Python 3.10 or newer (you have 3.13 - OK)
+     https://python.org
+
+  2. PostgreSQL 14+ must be installed and RUNNING
+     https://www.postgresql.org/download/windows/
+
+     During PostgreSQL install:
+     - Remember the postgres user password
+     - Default port: 5432
+
+  3. After PostgreSQL install, open .env file
+     and set DB_PASSWORD to your postgres password
+     (default in .env is "postgres")
+
+
+===================================================
+   ACCESS AFTER START
+===================================================
+
+  Site:   http://127.0.0.1:8000
+  Admin:  http://127.0.0.1:8000/admin/
+
+  admin / admin12345   - superuser
+  demo  / demo12345    - regular user
+
+
+===================================================
+   YANDEX MAPS API KEY
+===================================================
+
+  Already configured in .env.example:
+  9136e5a6-d6fd-4110-bb67-c899a820848c
+
+  Maps will work out of the box.
+
+
+===================================================
+   TROUBLESHOOTING
+===================================================
+
+  "Cannot connect to PostgreSQL":
+    - Check that postgres service is running
+    - Check password in .env matches your postgres user
+
+  "Database djancar already exists":
+    - Normal, it will be reused
+
+  Want to reset all data:
+    - Delete db.sqlite3 (if any)
+    - In pgAdmin drop database "djancar"
+    - Run DjanCar.bat again
+
+===================================================

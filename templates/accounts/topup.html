@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Пополнить баланс — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header"><div class="container"><h1>Пополнить баланс</h1></div></section>
+<section class="section">
+    <div class="container narrow">
+        <form method="post" class="card-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <label>{{ form.amount.label }}</label>
+                {{ form.amount|add_class:"input" }}
+            </div>
+            <div class="quick-amounts">
+                <button type="button" onclick="document.getElementById('id_amount').value=500">500 ₽</button>
+                <button type="button" onclick="document.getElementById('id_amount').value=1000">1000 ₽</button>
+                <button type="button" onclick="document.getElementById('id_amount').value=2000">2000 ₽</button>
+                <button type="button" onclick="document.getElementById('id_amount').value=5000">5000 ₽</button>
+            </div>
+            <p class="muted small">⚠️ Это демо-режим: оплата мгновенно зачисляется без реального списания</p>
+            <button class="btn btn-primary btn-block btn-lg">💳 Пополнить</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

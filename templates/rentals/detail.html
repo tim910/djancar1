@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load l10n %}
+
+{% block title %}Аренда #{{ rental.id }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header"><div class="container"><h1>Аренда #{{ rental.id }}</h1></div></section>
+
+<section class="section">
+    <div class="container rental-detail">
+        <div class="rental-header card-form">
+            <div class="rental-car-big">
+                {% if rental.car.main_image %}
+                    <img src="{{ rental.car.main_image.url }}" alt="">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&q=80" alt="">
+                {% endif %}
+                <div>
+                    <h2>{{ rental.car.full_name }}</h2>
+                    <p class="muted">{{ rental.car.number_plate }} · {{ rental.car.get_car_class_display }}</p>
+                    <span class="status-pill status-{{ rental.status }}">{{ rental.get_status_display }}</span>
+                </div>
+            </div>
+
+            <div class="rental-stats-grid">
+                <div><span class="muted small">Тарификация</span><strong>{{ rental.get_mode_display }}</strong></div>
+                <div><span class="muted small">Создана</span><strong>{{ rental.created_at|date:"d.m.Y H:i" }}</strong></div>
+                {% if rental.start_time %}<div><span class="muted small">Старт</span><strong>{{ rental.start_time|date:"d.m.Y H:i" }}</strong></div>{% endif %}
+                {% if rental.end_time %}<div><span class="muted small">Финиш</span><strong>{{ rental.end_time|date:"d.m.Y H:i" }}</strong></div>{% endif %}
+                <div><span class="muted small">Длительность</span><strong>{{ rental.duration_minutes }} мин</strong></div>
+                <div><span class="muted small">Итого</span><strong>{{ rental.final_cost|default:rental.total_cost|default:"—" }} ₽</strong></div>
+            </div>
+
+            <div class="rental-actions">
+                {% if rental.status == 'reserved' %}
+                    <form action="{% url 'rentals:start' rental.id %}" method="post" style="display:inline">
+                        {% csrf_token %}
+                        <button class="btn btn-primary btn-lg">🔑 Начать поездку</button>
+                    </form>
+                    <form action="{% url 'rentals:cancel' rental.id %}" method="post" style="display:inline">
+                        {% csrf_token %}
+                        <button class="btn btn-ghost">Отменить бронь</button>
+                    </form>
+                {% elif rental.status == 'active' %}
+                    <form action="{% url 'rentals:finish' rental.id %}" method="post" class="finish-form">
+                        {% csrf_token %}
+                        <input type="text" name="promo" placeholder="Промокод (если есть)" class="input">
+                        <button class="btn btn-primary btn-lg">🏁 Завершить поездку</button>
+                    </form>
+                {% elif rental.status == 'completed' and not rental.user_rating %}
+                    <form action="{% url 'rentals:rate' rental.id %}" method="post" class="rate-form">
+                        {% csrf_token %}
+                        <label class="muted">Как поездка?</label>
+                        <select name="rating" class="input">
+                            <option value="5">★★★★★ Отлично</option>
+                            <option value="4">★★★★☆ Хорошо</option>
+                            <option value="3">★★★☆☆ Нормально</option>
+                            <option value="2">★★☆☆☆ Плохо</option>
+                            <option value="1">★☆☆☆☆ Ужасно</option>
+                        </select>
+                        <textarea name="comment" class="input" rows="2" placeholder="Комментарий (необязательно)"></textarea>
+                        <button class="btn btn-primary">Оценить</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if rental.status == 'active' %}
+        <div class="card-form mt-2">
+            <h3>Где сейчас авто</h3>
+            <div id="rentalMap" style="height:380px;width:100%;border-radius:14px;overflow:hidden"></div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if rental.status == 'active' %}
+<script>
+const R_LAT = {{ rental.car.latitude|unlocalize }};
+const R_LNG = {{ rental.car.longitude|unlocalize }};
+const R_NAME = "{{ rental.car.full_name|escapejs }}";
+const R_KEY = "{{ YANDEX_MAPS_API_KEY|escapejs }}";
+
+function loadRentalMap(useKey) {
+    const s = document.createElement('script');
+    const params = ['lang=ru_RU'];
+    if (useKey && R_KEY) params.unshift('apikey=' + R_KEY);
+    s.src = 'https://api-maps.yandex.ru/2.1/?' + params.join('&');
+    s.onload = function () {
+        ymaps.ready(function () {
+            if (window._ymapsErr && useKey) { loadRentalMap(false); return; }
+            const m = new ymaps.Map('rentalMap', { center: [R_LAT, R_LNG], zoom: 14, controls: ['zoomControl'] });
+            m.geoObjects.add(new ymaps.Placemark([R_LAT, R_LNG], {
+                balloonContent: '<strong>' + R_NAME + '</strong>'
+            }, { preset: 'islands#redAutoIcon' }));
+        });
+    };
+    s.onerror = function () { if (useKey) loadRentalMap(false); };
+    document.head.appendChild(s);
+}
+const _ce = console.error;
+console.error = function () {
+    if (Array.from(arguments).join(' ').indexOf('Invalid API key') !== -1) window._ymapsErr = true;
+    _ce.apply(console, arguments);
+};
+loadRentalMap(true);
+</script>
+{% endif %}
+{% endblock %}

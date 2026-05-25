@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Тарифы — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Тарифы DjanCar</h1>
+        <p class="muted">Платишь только за то время, которое реально едешь</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="tariffs-grid">
+            {% for t in tariffs %}
+            <div class="tariff-card light {% if forloop.counter == 2 %}tariff-popular{% endif %}">
+                {% if forloop.counter == 2 %}<div class="popular-badge">Хит</div>{% endif %}
+                <h3>{{ t.name }}</h3>
+                <p class="muted">{{ t.description }}</p>
+                <div class="tariff-price"><span>{{ t.price_per_minute }}</span> ₽<small>/мин</small></div>
+                <ul class="tariff-features">
+                    <li>⏰ Час — <strong>{{ t.price_per_hour }} ₽</strong></li>
+                    <li>📅 Сутки — <strong>{{ t.price_per_day }} ₽</strong></li>
+                    <li>🛣️ Включено <strong>{{ t.free_kilometers }} км/сутки</strong></li>
+                    <li>⛽ Бензин включён</li>
+                    <li>🛡️ КАСКО + ОСАГО включены</li>
+                </ul>
+                <a href="{% url 'cars:list' %}" class="btn btn-primary btn-block">Выбрать авто</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-grey">
+    <div class="container">
+        <h2>Что включено в любой тариф</h2>
+        <div class="features-grid">
+            <div class="feature"><div class="feature-icon">⛽</div><h3>Топливо/зарядка</h3><p>Все авто заправлены. На электрокарах — бесплатная зарядка на сети DjanCharge.</p></div>
+            <div class="feature"><div class="feature-icon">🛡️</div><h3>Страховка</h3><p>КАСКО и ОСАГО на каждое авто. При ДТП твоя ответственность — до 30 000 ₽.</p></div>
+            <div class="feature"><div class="feature-icon">🧼</div><h3>Чистота</h3><p>Все машины моются раз в трое суток. Внутренняя химчистка — еженедельно.</p></div>
+            <div class="feature"><div class="feature-icon">📞</div><h3>Поддержка 24/7</h3><p>Звони 8 800 555-12-34 или пиши в чат — ответим в течение минуты.</p></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

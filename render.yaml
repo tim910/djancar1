@@ -1,0 +1,37 @@
+# Blueprint для деплоя на Render.com одной кнопкой.
+# Создаёт PostgreSQL базу и веб-сервис, связывает их через DATABASE_URL.
+# Документация: https://render.com/docs/blueprint-spec
+
+databases:
+  - name: djancar-db
+    databaseName: djancar
+    user: djancar
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: djancar
+    runtime: python
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: "bash build.sh"
+    startCommand: "gunicorn djancar.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DATABASE_URL
+        fromDatabase:
+          name: djancar-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: YANDEX_MAPS_API_KEY
+        value: b5e72e64-eaed-42a4-ae58-307175123276
+      - key: WEB_CONCURRENCY
+        value: "2"

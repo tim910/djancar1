@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Частые вопросы — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Часто задаваемые вопросы</h1>
+        <p class="muted">Не нашли ответ? Звоните 8 800 555-12-34 — мы 24/7</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container narrow">
+        <div class="faq">
+            {% for q, a in questions %}
+            <details class="faq-item">
+                <summary>{{ q }}</summary>
+                <p>{{ a }}</p>
+            </details>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

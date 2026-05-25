@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static l10n %}
+
+{% block title %}{{ car.full_name }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section car-detail">
+    <div class="container">
+        <a href="{% url 'cars:list' %}" class="back-link">← Назад к автопарку</a>
+
+        <div class="car-detail-grid">
+            <div class="car-gallery">
+                <div class="gallery-main">
+                    {% if car.main_image %}
+                        <img src="{{ car.main_image.url }}" alt="{{ car.full_name }}" id="galleryMain">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&q=80" id="galleryMain" alt="">
+                    {% endif %}
+                    <span class="status-pill status-{{ car.status }}">{{ car.get_status_display }}</span>
+                </div>
+                <div class="gallery-thumbs">
+                    {% if car.main_image %}
+                        <img src="{{ car.main_image.url }}" onclick="document.getElementById('galleryMain').src=this.src" class="thumb-active">
+                    {% endif %}
+                    {% for img in car.images.all %}
+                        <img src="{{ img.image.url }}" onclick="document.getElementById('galleryMain').src=this.src">
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="car-info">
+                <div class="muted small">{{ car.get_car_class_display }} · {{ car.year }}</div>
+                <h1>{{ car.full_name }}</h1>
+                <div class="rating-row">
+                    <span class="rating">★ {{ car.rating }}</span>
+                    <span class="muted">· {{ car.rentals_count }} аренд</span>
+                    <span class="plate">{{ car.number_plate }}</span>
+                </div>
+
+                <div class="specs-grid">
+                    <div class="spec"><span>Класс</span><strong>{{ car.get_car_class_display }}</strong></div>
+                    <div class="spec"><span>Коробка</span><strong>{{ car.get_transmission_display }}</strong></div>
+                    <div class="spec"><span>Топливо</span><strong>{{ car.get_fuel_type_display }}</strong></div>
+                    <div class="spec"><span>Двигатель</span><strong>{{ car.engine_volume }}л / {{ car.power_hp }} л.с.</strong></div>
+                    <div class="spec"><span>Мест</span><strong>{{ car.seats }}</strong></div>
+                    <div class="spec"><span>Цвет</span><strong>{{ car.color }}</strong></div>
+                    <div class="spec"><span>Топливо в баке</span><strong>{{ car.fuel_level }}%</strong></div>
+                    <div class="spec"><span>Пробег</span><strong>{{ car.mileage }} км</strong></div>
+                </div>
+
+                {% if car.has_child_seat or car.has_winter_tires %}
+                <div class="badges-row">
+                    {% if car.has_child_seat %}<span class="badge">👶 Детское кресло</span>{% endif %}
+                    {% if car.has_winter_tires %}<span class="badge">❄️ Зимняя резина</span>{% endif %}
+                </div>
+                {% endif %}
+
+                {% if car.description %}
+                <p class="muted">{{ car.description }}</p>
+                {% endif %}
+
+                <div class="pricing-box">
+                    <h3>Тариф «{{ car.tariff.name }}»</h3>
+                    <div class="pricing-grid">
+                        <div>
+                            <div class="price-num">{{ car.tariff.price_per_minute }} ₽</div>
+                            <div class="muted small">за минуту</div>
+                        </div>
+                        <div>
+                            <div class="price-num">{{ car.tariff.price_per_hour }} ₽</div>
+                            <div class="muted small">за час</div>
+                        </div>
+                        <div>
+                            <div class="price-num">{{ car.tariff.price_per_day }} ₽</div>
+                            <div class="muted small">за сутки</div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                    {% if LOW_BALANCE %}
+                        <div class="balance-warning">
+                            <span style="font-size:1.8rem">⚠️</span>
+                            <div>
+                                <strong>Недостаточно средств</strong>
+                                <div class="small">Баланс {{ user.balance|floatformat:0 }} ₽ — минимум {{ MIN_BALANCE }} ₽ для аренды</div>
+                            </div>
+                        </div>
+                        <a href="{% url 'accounts:topup' %}" class="btn btn-primary btn-lg btn-block">💳 Пополнить баланс</a>
+                    {% elif car.is_available %}
+                        <form action="{% url 'rentals:reserve' car.id %}" method="post" class="reserve-form">
+                            {% csrf_token %}
+                            <label class="muted small">Способ тарификации</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="mode" value="minute" checked> Поминутно</label>
+                                <label><input type="radio" name="mode" value="hour"> Почасово</label>
+                                <label><input type="radio" name="mode" value="day"> Посуточно</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">🔑 Забронировать</button>
+                            <p class="muted small">Бронь сохранится на 20 минут</p>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-ghost btn-lg btn-block" disabled>Сейчас недоступен</button>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg btn-block">Войдите, чтобы забронировать</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="section-mini">
+            <h2>Где сейчас находится</h2>
+            <div id="carMap" style="width:100%;height:380px;border-radius:18px;overflow:hidden"></div>
+            <p class="muted small">Адрес: {{ car.current_zone.address|default:"в зоне обслуживания" }}</p>
+        </div>
+
+        <div class="section-mini">
+            <h2>Отзывы клиентов ({{ reviews|length }})</h2>
+            {% if user.is_authenticated %}
+            <form action="{% url 'cars:review_add' car.id %}" method="post" class="review-form">
+                {% csrf_token %}
+                <select name="rating" required>
+                    <option value="5">★★★★★ — Отлично</option>
+                    <option value="4">★★★★☆ — Хорошо</option>
+                    <option value="3">★★★☆☆ — Нормально</option>
+                    <option value="2">★★☆☆☆ — Плохо</option>
+                    <option value="1">★☆☆☆☆ — Ужасно</option>
+                </select>
+                <textarea name="text" rows="3" placeholder="Поделись впечатлениями..." required></textarea>
+                <button class="btn btn-primary">Опубликовать отзыв</button>
+            </form>
+            {% endif %}
+
+            <div class="reviews-list">
+                {% for r in reviews %}
+                <div class="review">
+                    <div class="review-stars">{% for _ in "x"|rjust:r.rating %}★{% endfor %}</div>
+                    <p>{{ r.text }}</p>
+                    <div class="review-author">
+                        <span class="avatar-fallback">{{ r.user.first_name|default:r.user.username|first|upper }}</span>
+                        <div>
+                            <strong>{{ r.user.first_name|default:r.user.username }}</strong>
+                            <div class="small muted">{{ r.created_at|date:"d.m.Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="muted">Будьте первым, кто оставит отзыв</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if similar %}
+        <div class="section-mini">
+            <h2>Похожие автомобили</h2>
+            <div class="cars-grid">
+                {% for c in similar %}{% include 'cars/_card.html' with car=c %}{% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CAR_LAT = {{ car.latitude|unlocalize }};
+const CAR_LNG = {{ car.longitude|unlocalize }};
+const CAR_NAME = "{{ car.full_name|escapejs }}";
+const CAR_PLATE = "{{ car.number_plate|escapejs }}";
+const CAR_FUEL = {{ car.fuel_level }};
+const YANDEX_KEY = "{{ YANDEX_MAPS_API_KEY|escapejs }}";
+
+function loadCarMap(useKey) {
+    const s = document.createElement('script');
+    const params = ['lang=ru_RU'];
+    if (useKey && YANDEX_KEY) params.unshift('apikey=' + YANDEX_KEY);
+    s.src = 'https://api-maps.yandex.ru/2.1/?' + params.join('&');
+    s.onload = function () {
+        ymaps.ready(function () {
+            if (window._ymapsErr && useKey) { loadCarMap(false); return; }
+            const map = new ymaps.Map('carMap', {
+                center: [CAR_LAT, CAR_LNG],
+                zoom: 15,
+                controls: ['zoomControl', 'geolocationControl']
+            });
+            map.geoObjects.add(new ymaps.Placemark([CAR_LAT, CAR_LNG], {
+                balloonContent: '<strong>' + CAR_NAME + '</strong><br>' + CAR_PLATE + '<br>🔋 ' + CAR_FUEL + '%'
+            }, { preset: 'islands#redAutoIcon' }));
+        });
+    };
+    s.onerror = function () { if (useKey) loadCarMap(false); };
+    document.head.appendChild(s);
+}
+const _ce = console.error;
+console.error = function () {
+    if (Array.from(arguments).join(' ').indexOf('Invalid API key') !== -1) window._ymapsErr = true;
+    _ce.apply(console, arguments);
+};
+loadCarMap(true);
+</script>
+{% endblock %}

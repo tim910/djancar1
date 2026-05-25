@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Карта авто — {{ SITE_NAME }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    body { overflow-x: hidden; }
+    .map-page { padding: 0; }
+    .map-layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        min-height: calc(100vh - 80px);
+    }
+    .map-sidebar {
+        background: #fff;
+        border-right: 1px solid #eef0f4;
+        overflow-y: auto;
+        padding: 24px;
+        max-height: calc(100vh - 80px);
+    }
+    #mapBig {
+        height: calc(100vh - 80px);
+        width: 100%;
+        background: #e8eef3;
+    }
+    .map-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 1.1rem;
+        color: var(--text-muted);
+    }
+    .map-error {
+        padding: 30px;
+        text-align: center;
+        color: var(--danger);
+    }
+    @media (max-width: 900px) {
+        .map-layout { grid-template-columns: 1fr; }
+        #mapBig { height: 50vh; }
+        .map-sidebar { max-height: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="map-page">
+    <div class="map-layout">
+        <aside class="map-sidebar">
+            <h2>Авто на карте</h2>
+            <p class="muted small">Кликни на маркер, чтобы посмотреть подробнее</p>
+
+            <div class="map-filters">
+                <label class="check">
+                    <input type="checkbox" id="filterAvailable" checked>
+                    <span class="dot dot-success"></span> Свободные
+                </label>
+                <label class="check">
+                    <input type="checkbox" id="filterReserved">
+                    <span class="dot dot-warning"></span> Забронированные
+                </label>
+                <label class="check">
+                    <input type="checkbox" id="filterRented">
+                    <span class="dot dot-danger"></span> В аренде
+                </label>
+            </div>
+
+            <div class="map-legend">
+                <div class="legend-stat">
+                    <span id="countAvailable" class="stat-num small">—</span>
+                    <span class="muted small">свободно</span>
+                </div>
+                <div class="legend-stat">
+                    <span id="countTotal" class="stat-num small">—</span>
+                    <span class="muted small">всего авто</span>
+                </div>
+            </div>
+
+            <div id="carsList" class="map-cars-list">
+                <p class="muted small">Загрузка...</p>
+            </div>
+        </aside>
+
+        <div id="mapBig">
+            <div class="map-loading">⏳ Загружаем карту Ульяновска...</div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{{ zones_data|json_script:"zones-data" }}
+<script>
+const CARS_API_URL = "{% url 'cars:api' %}";
+const YANDEX_KEY = "{{ YANDEX_MAPS_API_KEY|escapejs }}";
+</script>
+<script>
+const ULYANOVSK_CENTER = [54.317825, 48.402539];
+const PARKING_ZONES = JSON.parse(document.getElementById('zones-data').textContent);
+
+let map = null;
+let carObjects = [];
+
+function mapLoadError() {
+    document.getElementById('mapBig').innerHTML =
+        '<div class="map-error">❌ Не удалось загрузить Яндекс.Карты. Проверьте интернет-соединение или API-ключ.</div>';
+}
+
+function statusColor(status) {
+    return {
+        'available': '#10b981',
+        'reserved':  '#f59e0b',
+        'rented':    '#ef4444',
+        'service':   '#3b82f6',
+        'repair':    '#6b7280'
+    }[status] || '#6b7280';
+}
+
+function statusPreset(status) {
+    return {
+        'available': 'islands#greenAutoIcon',
+        'reserved':  'islands#yellowAutoIcon',
+        'rented':    'islands#redAutoIcon',
+        'service':   'islands#blueAutoIcon',
+        'repair':    'islands#grayAutoIcon'
+    }[status] || 'islands#grayAutoIcon';
+}
+
+function initMap() {
+    try {
+        document.getElementById('mapBig').innerHTML = '';
+
+        map = new ymaps.Map('mapBig', {
+            center: ULYANOVSK_CENTER,
+            zoom: 12,
+            controls: ['zoomControl', 'geolocationControl', 'fullscreenControl', 'typeSelector', 'searchControl']
+        });
+
+        // Парковочные зоны
+        PARKING_ZONES.forEach(function (z) {
+            const circle = new ymaps.Circle([[z.lat, z.lng], 280], {
+                balloonContent: '<strong>' + z.name + '</strong><br>' + z.address +
+                                (z.charger ? '<br>⚡ Зарядка для электрокаров' : ''),
+                hintContent: 'Парковочная зона: ' + z.name
+            }, {
+                fillColor: 'rgba(255,196,0,0.18)',
+                strokeColor: '#f5a800',
+                strokeWidth: 2,
+                strokeOpacity: 0.7
+            });
+            map.geoObjects.add(circle);
+        });
+
+        loadCars();
+
+        document.getElementById('filterAvailable').addEventListener('change', loadCars);
+        document.getElementById('filterReserved').addEventListener('change', loadCars);
+        document.getElementById('filterRented').addEventListener('change', loadCars);
+    } catch (e) {
+        console.error('Map init error:', e);
+        mapLoadError();
+    }
+}
+
+function loadCars() {
+    fetch(CARS_API_URL)
+        .then(function (r) { return r.json(); })
+        .then(function (data) { renderCars(data); })
+        .catch(function (e) {
+            console.error('Cars load error:', e);
+            document.getElementById('carsList').innerHTML = '<p class="muted">Ошибка загрузки авто</p>';
+        });
+}
+
+function renderCars(data) {
+    // удаляем старые маркеры
+    carObjects.forEach(function (o) { map.geoObjects.remove(o); });
+    carObjects = [];
+
+    const showAvailable = document.getElementById('filterAvailable').checked;
+    const showReserved = document.getElementById('filterReserved').checked;
+    const showRented = document.getElementById('filterRented').checked;
+
+    let listHTML = '';
+    let availableCount = 0;
+
+    data.cars.forEach(function (car) {
+        if (car.status === 'available') availableCount++;
+
+        const showThis =
+            (car.status === 'available' && showAvailable) ||
+            (car.status === 'reserved' && showReserved) ||
+            (car.status === 'rented' && showRented);
+        if (!showThis) return;
+
+        const color = statusColor(car.status);
+        const preset = statusPreset(car.status);
+
+        const balloon =
+            (car.image ? '<img src="' + car.image + '" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px">' : '') +
+            '<div style="font-size:13px">🔋 <b>' + car.fuel_level + '%</b> · ⚙️ ' + car.transmission + ' · ⛽ ' + car.fuel_type + '</div>' +
+            '<div style="font-size:13px;color:#666;margin:4px 0">📋 ' + car.plate + ' · ★ ' + car.rating + '</div>' +
+            '<div style="margin:8px 0;font-size:18px;font-weight:700;color:#FF6B35">' + car.price_per_minute + ' ₽/мин</div>' +
+            '<a href="' + car.url + '" style="display:inline-block;padding:8px 16px;background:#FF6B35;color:white;border-radius:8px;text-decoration:none;font-weight:600">Подробнее →</a>';
+
+        const placemark = new ymaps.Placemark([car.lat, car.lng], {
+            balloonContentHeader: '<b>' + car.name + '</b>',
+            balloonContentBody: balloon,
+            hintContent: car.name + ' · ' + car.price_per_minute + ' ₽/мин'
+        }, {
+            preset: preset
+        });
+
+        map.geoObjects.add(placemark);
+        carObjects.push(placemark);
+
+        listHTML +=
+            '<a href="' + car.url + '" class="map-car-item">' +
+            (car.image ? '<img src="' + car.image + '" alt="">' : '<div class="ph"></div>') +
+            '<div><strong>' + car.name + '</strong>' +
+            '<div class="muted small">' + car.plate + ' · ' + car['class'] + '</div>' +
+            '<div class="small"><span style="color:' + color + '">●</span> ' + car.status_label + ' · 🔋 ' + car.fuel_level + '%</div>' +
+            '</div><div class="map-car-price">' + car.price_per_minute + ' ₽<small>/мин</small></div></a>';
+    });
+
+    document.getElementById('countTotal').textContent = data.count;
+    document.getElementById('countAvailable').textContent = availableCount;
+    document.getElementById('carsList').innerHTML = listHTML || '<p class="muted small">Авто не найдено</p>';
+}
+
+// Динамическая загрузка Яндекс.Карт.
+// Если ключ невалидный — пробуем без ключа (работает на localhost).
+function loadYmaps(useKey) {
+    const script = document.createElement('script');
+    const params = ['lang=ru_RU'];
+    if (useKey && YANDEX_KEY) params.unshift('apikey=' + YANDEX_KEY);
+    script.src = 'https://api-maps.yandex.ru/2.1/?' + params.join('&');
+    script.async = true;
+
+    script.onload = function () {
+        ymaps.ready(function () {
+            // Проверяем не выкинула ли библиотека "Invalid API key"
+            if (window._ymapsError) {
+                if (useKey) loadYmaps(false);
+                else mapLoadError();
+            } else {
+                initMap();
+            }
+        });
+    };
+    script.onerror = function () {
+        if (useKey) loadYmaps(false);
+        else mapLoadError();
+    };
+    document.head.appendChild(script);
+}
+
+// Перехватываем ошибки от ymaps в консоль
+const origError = console.error;
+console.error = function () {
+    const msg = Array.from(arguments).join(' ');
+    if (msg.indexOf('Invalid API key') !== -1 || msg.indexOf('apikey') !== -1) {
+        window._ymapsError = true;
+    }
+    origError.apply(console, arguments);
+};
+
+loadYmaps(true);
+</script>
+{% endblock %}

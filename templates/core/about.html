@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}О компании — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>О компании DjanCar</h1>
+        <p class="muted">Каршеринг нового поколения для жителей Ульяновска</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container about-grid">
+        <div>
+            <h2>Наша миссия</h2>
+            <p>DjanCar появился в 2024 году с простой целью: сделать передвижение по Ульяновску таким же удобным, как в столице. Мы запустили первые 10 машин в Новом городе, а через год покрыли весь Ульяновск — от Засвияжья до Заволжья.</p>
+            <p>Сегодня в нашем автопарке более 50 машин: от экономичных Kia Rio до премиальных BMW и электрокаров Evolute. И мы продолжаем расти.</p>
+        </div>
+        <div>
+            <img src="https://images.unsplash.com/photo-1542362567-b07e54358753?w=800&q=80" style="border-radius:20px;width:100%" alt="">
+        </div>
+    </div>
+</section>
+
+<section class="section section-grey">
+    <div class="container">
+        <div class="section-head">
+            <h2>Цифры о нас</h2>
+        </div>
+        <div class="stats-bigs">
+            <div><div class="big-num">2024</div><div class="muted">год основания</div></div>
+            <div><div class="big-num">50+</div><div class="muted">авто в парке</div></div>
+            <div><div class="big-num">25</div><div class="muted">зон парковки</div></div>
+            <div><div class="big-num">5800</div><div class="muted">активных клиентов</div></div>
+            <div><div class="big-num">320 000</div><div class="muted">завершённых поездок</div></div>
+            <div><div class="big-num">4.9</div><div class="muted">средний рейтинг</div></div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head"><h2>Команда</h2></div>
+        <div class="team-grid">
+            <div class="team-card">
+                <img src="https://i.pravatar.cc/200?img=15">
+                <h3>Тимур Джанбеков</h3>
+                <p class="muted">CEO, основатель</p>
+            </div>
+            <div class="team-card">
+                <img src="https://i.pravatar.cc/200?img=23">
+                <h3>Анна Седова</h3>
+                <p class="muted">CTO</p>
+            </div>
+            <div class="team-card">
+                <img src="https://i.pravatar.cc/200?img=51">
+                <h3>Михаил Кузнецов</h3>
+                <p class="muted">Главный механик</p>
+            </div>
+            <div class="team-card">
+                <img src="https://i.pravatar.cc/200?img=44">
+                <h3>Ольга Петрова</h3>
+                <p class="muted">Руководитель поддержки</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

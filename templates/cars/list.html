@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Автопарк — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Автопарк DjanCar</h1>
+        <p class="muted">{{ cars|length }} автомобилей в Ульяновске. Выбери идеальный для поездки.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <form method="get" class="filters">
+            <input type="text" name="q" placeholder="🔍 Поиск: марка, модель, номер" value="{{ filters.q }}">
+
+            <select name="class">
+                <option value="">Любой класс</option>
+                {% for v, l in car_classes %}
+                <option value="{{ v }}" {% if filters.class == v %}selected{% endif %}>{{ l }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="fuel">
+                <option value="">Любое топливо</option>
+                {% for v, l in fuel_types %}
+                <option value="{{ v }}" {% if filters.fuel == v %}selected{% endif %}>{{ l }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="transmission">
+                <option value="">Любая КПП</option>
+                {% for v, l in transmissions %}
+                <option value="{{ v }}" {% if filters.transmission == v %}selected{% endif %}>{{ l }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="status">
+                <option value="">Любой статус</option>
+                <option value="available" {% if filters.status == 'available' %}selected{% endif %}>Только свободные</option>
+                <option value="reserved" {% if filters.status == 'reserved' %}selected{% endif %}>Забронированные</option>
+                <option value="rented" {% if filters.status == 'rented' %}selected{% endif %}>В аренде</option>
+            </select>
+
+            <select name="sort">
+                <option value="-rating" {% if filters.sort == '-rating' %}selected{% endif %}>По рейтингу</option>
+                <option value="tariff__price_per_minute" {% if filters.sort == 'tariff__price_per_minute' %}selected{% endif %}>Цена ↑</option>
+                <option value="-tariff__price_per_minute" {% if filters.sort == '-tariff__price_per_minute' %}selected{% endif %}>Цена ↓</option>
+                <option value="-year" {% if filters.sort == '-year' %}selected{% endif %}>Новее</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary">Применить</button>
+            <a href="{% url 'cars:list' %}" class="btn btn-ghost">Сбросить</a>
+        </form>
+
+        <div class="cars-grid mt-3">
+            {% for car in cars %}
+                {% include 'cars/_card.html' with car=car %}
+            {% empty %}
+                <div class="empty-state">
+                    <p>😕 Не нашли подходящих машин. Попробуй сбросить фильтры.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

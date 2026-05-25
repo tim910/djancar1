@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ SITE_NAME }} — каршеринг в Ульяновске{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="container hero-inner">
+        <div class="hero-text">
+            <span class="badge-pill">🚀 Новинка в Ульяновске</span>
+            <h1 class="hero-title">
+                Каршеринг,<br>
+                который <span class="grad-text">меняет город</span>
+            </h1>
+            <p class="hero-sub">
+                Бери авто за 30 секунд через приложение, езжай куда хочешь
+                и оставляй где удобно. Никаких залогов и скрытых платежей.
+            </p>
+            <div class="hero-cta">
+                <a href="{% url 'core:map' %}" class="btn btn-primary btn-lg">📍 Найти авто рядом</a>
+                <a href="{% url 'cars:list' %}" class="btn btn-outline btn-lg">Смотреть автопарк</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-num">{{ stats.cars_total }}+</div>
+                    <div class="stat-label">авто в парке</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">{{ stats.zones_total }}</div>
+                    <div class="stat-label">парковочных зон</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">{{ stats.happy_clients }}</div>
+                    <div class="stat-label">довольных клиентов</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">24/7</div>
+                    <div class="stat-label">поддержка</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=900&q=80" alt="Каршеринг авто">
+            <div class="floating-card card-1">
+                <span class="dot dot-success"></span>
+                <div>
+                    <strong>{{ stats.cars_available }} авто</strong>
+                    <div class="small muted">свободны сейчас</div>
+                </div>
+            </div>
+            <div class="floating-card card-2">
+                <span class="dot dot-warning"></span>
+                <div>
+                    <strong>от 7 ₽/мин</strong>
+                    <div class="small muted">эконом-класс</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2>Как это работает</h2>
+            <p class="muted">Четыре простых шага — и ты уже в пути</p>
+        </div>
+        <div class="how-grid">
+            <div class="how-card">
+                <div class="how-num">01</div>
+                <div class="how-icon">📱</div>
+                <h3>Зарегистрируйся</h3>
+                <p>Загрузи фото паспорта и водительских прав — проверим за 15 минут.</p>
+            </div>
+            <div class="how-card">
+                <div class="how-num">02</div>
+                <div class="how-icon">🗺️</div>
+                <h3>Выбери авто на карте</h3>
+                <p>Открывай карту, выбирай ближайшую машину и бронируй на 20 минут бесплатно.</p>
+            </div>
+            <div class="how-card">
+                <div class="how-num">03</div>
+                <div class="how-icon">🔑</div>
+                <h3>Открывай и поезжай</h3>
+                <p>Авто откроется автоматически. Ключ внутри — заводи и в путь!</p>
+            </div>
+            <div class="how-card">
+                <div class="how-num">04</div>
+                <div class="how-icon">💳</div>
+                <h3>Завершай где удобно</h3>
+                <p>Останови машину в жёлтой зоне на карте — оплата спишется сама.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-grey">
+    <div class="container">
+        <div class="section-head">
+            <h2>Популярные автомобили</h2>
+            <p class="muted">Лучшие машины нашего автопарка по рейтингу клиентов</p>
+        </div>
+        <div class="cars-grid">
+            {% for car in featured_cars %}
+                {% include 'cars/_card.html' with car=car %}
+            {% empty %}
+                <p class="muted">Скоро здесь появятся автомобили</p>
+            {% endfor %}
+        </div>
+        <div class="center mt-3">
+            <a href="{% url 'cars:list' %}" class="btn btn-primary">Весь автопарк →</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2>Классы автомобилей</h2>
+            <p class="muted">Выбирай авто под любую задачу</p>
+        </div>
+        <div class="classes-grid">
+            <div class="class-card grad-economy">
+                <div class="class-emoji">🚙</div>
+                <h3>Эконом</h3>
+                <p>Kia Rio, Hyundai Solaris, LADA Vesta</p>
+                <div class="class-price">от 7 ₽/мин</div>
+            </div>
+            <div class="class-card grad-comfort">
+                <div class="class-emoji">🚘</div>
+                <h3>Комфорт</h3>
+                <p>Toyota Camry, Skoda Octavia, Volkswagen Polo</p>
+                <div class="class-price">от 12 ₽/мин</div>
+            </div>
+            <div class="class-card grad-suv">
+                <div class="class-emoji">🚖</div>
+                <h3>Кроссовер</h3>
+                <p>Hyundai Creta, Kia Sportage, Renault Duster</p>
+                <div class="class-price">от 15 ₽/мин</div>
+            </div>
+            <div class="class-card grad-business">
+                <div class="class-emoji">🏎️</div>
+                <h3>Бизнес</h3>
+                <p>BMW 3, Mercedes E, Audi A6</p>
+                <div class="class-price">от 22 ₽/мин</div>
+            </div>
+            <div class="class-card grad-electro">
+                <div class="class-emoji">⚡</div>
+                <h3>Электрокар</h3>
+                <p>Tesla Model 3, Evolute i-Pro, Москвич 3е</p>
+                <div class="class-price">от 9 ₽/мин</div>
+            </div>
+            <div class="class-card grad-premium">
+                <div class="class-emoji">💎</div>
+                <h3>Премиум</h3>
+                <p>Porsche Cayenne, Mercedes G, BMW X7</p>
+                <div class="class-price">от 35 ₽/мин</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-dark">
+    <div class="container">
+        <div class="section-head light">
+            <h2>Тарифы DjanCar</h2>
+            <p class="muted-light">Выбирай удобный режим — поминутно, почасово или посуточно</p>
+        </div>
+        <div class="tariffs-grid">
+            {% for t in tariffs %}
+                <div class="tariff-card {% if forloop.counter == 2 %}tariff-popular{% endif %}">
+                    {% if forloop.counter == 2 %}<div class="popular-badge">Популярный</div>{% endif %}
+                    <h3>{{ t.name }}</h3>
+                    <p class="muted-light">{{ t.description }}</p>
+                    <div class="tariff-price"><span>{{ t.price_per_minute }}</span> ₽<small>/мин</small></div>
+                    <ul class="tariff-features">
+                        <li>⏰ Час: <strong>{{ t.price_per_hour }} ₽</strong></li>
+                        <li>📅 Сутки: <strong>{{ t.price_per_day }} ₽</strong></li>
+                        <li>🛣️ Включено: <strong>{{ t.free_kilometers }} км/день</strong></li>
+                        <li>⛽ Бензин и страховка включены</li>
+                    </ul>
+                    <a href="{% url 'cars:list' %}?tariff={{ t.id }}" class="btn btn-light">Выбрать авто</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <h2>Почему выбирают DjanCar</h2>
+            <p class="muted">Шесть причин, по которым ульяновцы влюбляются в наш каршеринг</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Авто за 30 секунд</h3>
+                <p>Бронь, открытие и старт — всё через приложение. Без очередей и бумажек.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🛡️</div>
+                <h3>КАСКО и ОСАГО</h3>
+                <p>Все авто застрахованы по максимальной программе. Никаких сюрпризов.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">⛽</div>
+                <h3>Топливо включено</h3>
+                <p>Заправлять не нужно. А если бак ниже 15% — получи скидку 200 ₽ за заправку.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">📍</div>
+                <h3>Покрытие города</h3>
+                <p>Зоны парковок в Засвияжье, Новом городе, Заволжье и центре.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎁</div>
+                <h3>Бонусы за поездки</h3>
+                <p>За каждые 10 ₽ — 1 бонус. Меняй их на бесплатные минуты.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🌍</div>
+                <h3>Электрокары</h3>
+                <p>В парке Tesla, Evolute и Москвич 3е — экологично и дешевле.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-grey">
+    <div class="container">
+        <div class="section-head">
+            <h2>Отзывы наших клиентов</h2>
+            <p class="muted">Что говорят те, кто уже пользуется DjanCar</p>
+        </div>
+        <div class="reviews-grid">
+            <div class="review">
+                <div class="review-stars">★★★★★</div>
+                <p>«Каждое утро катаюсь до УлГУ. Выходит дешевле такси и быстрее, чем маршрутка. Авто всегда чистые, рекомендую!»</p>
+                <div class="review-author">
+                    <img src="https://i.pravatar.cc/64?img=12" alt="">
+                    <div>
+                        <strong>Алексей М.</strong>
+                        <div class="small muted">студент УлГУ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review">
+                <div class="review-stars">★★★★★</div>
+                <p>«Брала Hyundai Creta на выходные в Самару. Удобно, что нет ограничения по пробегу. И поддержка реально 24/7 — звонила ночью.»</p>
+                <div class="review-author">
+                    <img src="https://i.pravatar.cc/64?img=47" alt="">
+                    <div>
+                        <strong>Мария Т.</strong>
+                        <div class="small muted">маркетолог</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review">
+                <div class="review-stars">★★★★★</div>
+                <p>«Попробовал электрокар Evolute — тише, мягче, дешевле. Теперь только электрички в DjanCar. И в зону Засвияжья много авто всегда.»</p>
+                <div class="review-author">
+                    <img src="https://i.pravatar.cc/64?img=33" alt="">
+                    <div>
+                        <strong>Денис К.</strong>
+                        <div class="small muted">IT-специалист</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-cta">
+    <div class="container cta-inner">
+        <div>
+            <h2>Готов поехать?</h2>
+            <p class="muted-light">Регистрация — 3 минуты. Первая поездка — со скидкой 30%.</p>
+        </div>
+        <div class="cta-actions">
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Зарегистрироваться</a>
+            {% endif %}
+            <a href="{% url 'core:map' %}" class="btn btn-outline-light btn-lg">Открыть карту</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

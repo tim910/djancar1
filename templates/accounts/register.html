@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Регистрация — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-grid">
+        <div class="auth-side" style="background-image:url('https://images.unsplash.com/photo-1542362567-b07e54358753?w=1200&q=80')">
+            <div class="auth-side-content">
+                <h2>Присоединяйся к DjanCar</h2>
+                <p>Скидка 30% на первую поездку всем новым клиентам</p>
+            </div>
+        </div>
+        <div class="auth-form-wrap">
+            <div class="auth-form">
+                <h1>Регистрация</h1>
+                <p class="muted">3 минуты — и ты в пути</p>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-row">
+                        <label>{{ field.label }}</label>
+                        {{ field|add_class:"input" }}
+                        {% if field.help_text %}<small class="muted">{{ field.help_text|safe }}</small>{% endif %}
+                        {% if field.errors %}<small class="error">{{ field.errors|join:", " }}</small>{% endif %}
+                    </div>
+                    {% endfor %}
+                    <button class="btn btn-primary btn-block btn-lg">Создать аккаунт</button>
+                </form>
+                <p class="muted center mt-2">Уже есть аккаунт? <a href="{% url 'accounts:login' %}">Войти</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

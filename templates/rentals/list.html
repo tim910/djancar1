@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои поездки — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Мои поездки</h1>
+        <p class="muted">История всех твоих аренд в DjanCar</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if rentals %}
+        <div class="rentals-list">
+            {% for r in rentals %}
+            <a href="{% url 'rentals:detail' r.id %}" class="rental-row">
+                <div class="rental-car">
+                    {% if r.car.main_image %}<img src="{{ r.car.main_image.url }}">{% endif %}
+                    <div>
+                        <strong>{{ r.car.full_name }}</strong>
+                        <div class="muted small">{{ r.car.number_plate }} · {{ r.get_mode_display }}</div>
+                    </div>
+                </div>
+                <div class="rental-info">
+                    <div class="muted small">{{ r.created_at|date:"d.m.Y H:i" }}</div>
+                    <span class="status-pill status-{{ r.status }}">{{ r.get_status_display }}</span>
+                </div>
+                <div class="rental-price"><strong>{{ r.final_cost|default:"—" }} ₽</strong></div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>У тебя ещё нет поездок 🚗</p>
+            <a href="{% url 'cars:list' %}" class="btn btn-primary">Выбрать авто</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
