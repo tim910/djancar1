@@ -1,48 +1,46 @@
-/* ===== DjanCar — Tech / Tesla стиль ===== */
+/* ===== DjanCar — основной стиль ===== */
 :root {
-    /* Цвета бренда — электрический cyan + индиго */
-    --primary: #06B6D4;
-    --primary-dark: #0891B2;
-    --accent: #00E5FF;
-    --secondary: #6366F1;
+    /* Цвета бренда (одинаковы для обеих тем) */
+    --primary: #FF6B35;
+    --primary-dark: #E04E1A;
+    --accent: #FFD23F;
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
     --info: #3b82f6;
-    --gradient: linear-gradient(135deg, #06B6D4 0%, #6366F1 100%);
-    --gradient-accent: linear-gradient(135deg, #00E5FF 0%, #06B6D4 100%);
-    --gradient-dark: linear-gradient(135deg, #0F172A 0%, #020617 100%);
-    --transition: all 0.2s cubic-bezier(.4, 0, .2, 1);
-    --radius: 10px;
-    --radius-lg: 14px;
+    --gradient: linear-gradient(135deg, #FF6B35 0%, #FFD23F 100%);
+    --gradient-dark: linear-gradient(135deg, #2D3047 0%, #1A1B2E 100%);
+    --transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
+    --radius: 14px;
+    --radius-lg: 22px;
 
-    /* СВЕТЛАЯ ТЕМА — чистый минимализм */
-    --bg: #F8FAFC;
-    --bg-grey: #F1F5F9;
+    /* СВЕТЛАЯ ТЕМА (по умолчанию) */
+    --bg: #FAFBFC;
+    --bg-grey: #F4F5F9;
     --bg-card: #FFFFFF;
-    --bg-dark: #0F172A;
-    --text: #0F172A;
-    --text-muted: #64748B;
-    --border: #E2E8F0;
-    --header-bg: rgba(248,250,252,0.85);
-    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
-    --shadow: 0 4px 12px rgba(15,23,42,0.06);
-    --shadow-lg: 0 16px 40px rgba(15,23,42,0.1);
+    --bg-dark: #1A1B2E;
+    --text: #1A1B2E;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --header-bg: rgba(255,255,255,0.92);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
 }
 
-/* ТЁМНАЯ ТЕМА — глубокий навy с неоновым свечением */
+/* ТЁМНАЯ ТЕМА */
 [data-theme="dark"] {
-    --bg: #060A14;
-    --bg-grey: #0F172A;
-    --bg-card: #131A2B;
-    --bg-dark: #02050C;
-    --text: #F1F5F9;
-    --text-muted: #94A3B8;
-    --border: #1E293B;
-    --header-bg: rgba(6,10,20,0.88);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-    --shadow: 0 4px 16px rgba(0,0,0,0.55);
-    --shadow-lg: 0 12px 40px rgba(6,182,212,0.15);
+    --bg: #0F1117;
+    --bg-grey: #1A1D26;
+    --bg-card: #1E222D;
+    --bg-dark: #0A0B11;
+    --text: #F1F3F8;
+    --text-muted: #B6BCC8;
+    --border: #2A2F3B;
+    --header-bg: rgba(15,17,23,0.88);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow: 0 4px 16px rgba(0,0,0,0.5);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.6);
 }
 
 /* === ТЁМНАЯ ТЕМА: универсальные правила === */
@@ -173,33 +171,6 @@
 /* Картинки чуть приглушаем */
 [data-theme="dark"] .car-card-image img,
 [data-theme="dark"] .gallery-main img { filter: brightness(0.92); }
-
-/* Tech-эффекты для тёмной темы */
-[data-theme="dark"] .car-card,
-[data-theme="dark"] .feature,
-[data-theme="dark"] .how-card,
-[data-theme="dark"] .review,
-[data-theme="dark"] .team-card,
-[data-theme="dark"] .tariff-card,
-[data-theme="dark"] .contact-card {
-    border: 1px solid var(--border);
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-}
-[data-theme="dark"] .car-card:hover,
-[data-theme="dark"] .feature:hover,
-[data-theme="dark"] .how-card:hover,
-[data-theme="dark"] .team-card:hover,
-[data-theme="dark"] .tariff-card:hover,
-[data-theme="dark"] .contact-card:hover {
-    border-color: rgba(6,182,212,0.4);
-    box-shadow: 0 12px 40px rgba(6,182,212,0.15), 0 0 0 1px rgba(6,182,212,0.2);
-}
-
-/* Светящаяся линия под шапкой в тёмной */
-[data-theme="dark"] .site-header {
-    border-bottom-color: rgba(6,182,212,0.15);
-    box-shadow: 0 1px 0 rgba(6,182,212,0.08);
-}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -504,20 +475,9 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
 .btn-primary {
     background: var(--gradient);
     color: white;
-    box-shadow: 0 6px 20px rgba(6,182,212,0.35);
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(255,107,53,0.3);
 }
-.btn-primary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
-    transform: translateX(-100%);
-    transition: transform 0.6s;
-}
-.btn-primary:hover::after { transform: translateX(100%); }
-.btn-primary:hover { transform: translateY(-2px); color: white; box-shadow: 0 12px 30px rgba(6,182,212,0.5); }
+.btn-primary:hover { transform: translateY(-2px); color: white; box-shadow: 0 10px 24px rgba(255,107,53,0.4); }
 .btn-ghost { background: transparent; color: var(--text); }
 .btn-ghost:hover { background: var(--bg-grey); color: var(--text); }
 .btn-outline { background: white; color: var(--text); border: 2px solid var(--text); }
@@ -788,17 +748,10 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
     position: absolute;
     inset: 0;
     background-image:
-        linear-gradient(rgba(6,182,212,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(6,182,212,0.08) 1px, transparent 1px);
-    background-size: 50px 50px;
+        linear-gradient(rgba(255,107,53,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,107,53,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
     pointer-events: none;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
-}
-[data-theme="dark"] .hero-bg-grid {
-    background-image:
-        linear-gradient(rgba(6,182,212,0.18) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(6,182,212,0.18) 1px, transparent 1px);
 }
 
 .hero-inner {
@@ -812,9 +765,8 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
 .badge-pill {
     display: inline-block;
     padding: 6px 16px;
-    background: rgba(6,182,212,0.1);
+    background: rgba(255,107,53,0.1);
     color: var(--primary);
-    border: 1px solid rgba(6,182,212,0.3);
     border-radius: 100px;
     font-weight: 600;
     font-size: 0.85rem;
