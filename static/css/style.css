@@ -22,6 +22,7 @@
     --gradient: linear-gradient(135deg, #FF6B35 0%, #FFD23F 100%);
     --gradient-dark: linear-gradient(135deg, #2D3047 0%, #1A1B2E 100%);
     --transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
+    
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -113,18 +114,81 @@ img { max-width: 100%; display: block; }
     border-radius: 100px;
 }
 
-.main-nav { display: flex; gap: 8px; }
-.main-nav a {
+.desktop-nav { display: flex; gap: 8px; }
+.desktop-nav a {
     padding: 10px 14px;
     border-radius: 10px;
     color: var(--text);
     font-weight: 500;
     transition: var(--transition);
 }
-.main-nav a:hover {
+.desktop-nav a:hover {
     background: var(--bg-grey);
     color: var(--primary);
 }
+
+/* Mobile drawer (вне header — fixed работает относительно viewport) */
+.mobile-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh;
+    background: #ffffff;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 80px 16px 24px;
+    box-shadow: -8px 0 40px rgba(0,0,0,0.25);
+    z-index: 1050;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.mobile-menu a {
+    display: block;
+    padding: 14px 18px;
+    border-radius: 10px;
+    color: #1A1B2E;
+    font-weight: 600;
+    font-size: 1.05rem;
+    background: transparent;
+}
+.mobile-menu a:active { background: var(--bg-grey); }
+.mobile-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 4px;
+}
+body.menu-open .mobile-menu {
+    display: flex;
+    animation: drawerSlide 0.28s ease-out;
+}
+@keyframes drawerSlide {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.mobile-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+body.menu-open .mobile-backdrop {
+    display: block;
+    animation: bgFade 0.25s ease-out;
+}
+@keyframes bgFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+body.menu-open { overflow: hidden; }
+/* Шапка над меню — бургер всегда кликабельный для закрытия */
+body.menu-open .site-header { z-index: 1100; }
 
 .header-actions {
     display: flex;
@@ -1235,84 +1299,10 @@ body.menu-open .burger span:nth-child(3) { top: 21px; transform: rotate(-45deg);
     .logo-mark { font-size: 1.4rem; }
     .logo-city { display: none; }
 
-    /* Бургер показываем на мобильных */
-    .burger {
-        display: block;
-        position: relative;
-        z-index: 1001;
-    }
+    /* Бургер — показываем, десктоп-нав — прячем */
+    .burger { display: block; }
     .burger:active { background: #e0e2e8; }
-
-    /* Мобильное меню — drawer справа */
-    .main-nav {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 80%;
-        max-width: 320px;
-        background: #ffffff;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-        padding: 80px 18px 30px;
-        box-shadow: -8px 0 30px rgba(0,0,0,0.15);
-        z-index: 999;
-        overflow-y: auto;
-        visibility: hidden;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: transform 0.3s ease, opacity 0.2s ease, visibility 0.3s;
-    }
-    body.menu-open .main-nav {
-        visibility: visible;
-        opacity: 1;
-        transform: translateX(0);
-    }
-    .main-nav a {
-        display: block;
-        width: 100%;
-        padding: 14px 18px;
-        border-radius: 10px;
-        font-size: 1.05rem;
-        font-weight: 600;
-        color: #1A1B2E;
-        background: transparent;
-        text-align: left;
-    }
-    .main-nav a:active { background: var(--bg-grey); }
-
-    /* Разделитель и доп.пункты внутри drawer */
-    .mobile-only-nav {
-        display: flex !important;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid var(--border);
-    }
-    .mobile-only-nav a {
-        font-size: 1rem !important;
-        color: var(--text-muted) !important;
-    }
-
-    /* Подложка */
-    .mobile-backdrop {
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 998;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.25s, visibility 0.25s;
-    }
-    body.menu-open .mobile-backdrop {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    body.menu-open { overflow: hidden; }
+    .desktop-nav { display: none; }
 
     /* Шапка: профиль-чип компактный */
     .profile-name, .profile-balance { display: none; }

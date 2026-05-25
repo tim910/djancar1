@@ -4,19 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // ===== БУРГЕР-МЕНЮ =====
     const burger = document.getElementById('burgerBtn');
     const backdrop = document.getElementById('mobileBackdrop');
-    const nav = document.getElementById('mainNav');
+    const menu = document.getElementById('mobileMenu');
     const body = document.body;
 
-    function openMenu() {
-        body.classList.add('menu-open');
-    }
-    function closeMenu() {
-        body.classList.remove('menu-open');
-    }
-    function toggleMenu() {
-        if (body.classList.contains('menu-open')) closeMenu();
-        else openMenu();
-    }
+    function closeMenu() { body.classList.remove('menu-open'); }
+    function toggleMenu() { body.classList.toggle('menu-open'); }
 
     if (burger) {
         burger.addEventListener('click', function (e) {
@@ -29,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
         backdrop.addEventListener('click', closeMenu);
     }
     // Закрытие меню при тапе на пункт
-    if (nav) {
-        nav.querySelectorAll('a').forEach(function (a) {
+    if (menu) {
+        menu.querySelectorAll('a').forEach(function (a) {
             a.addEventListener('click', closeMenu);
         });
     }
@@ -56,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ===== Подсветка активного пункта меню =====
     const path = window.location.pathname;
-    document.querySelectorAll('.main-nav a').forEach(function (a) {
+    document.querySelectorAll('.desktop-nav a, .mobile-menu a').forEach(function (a) {
         const href = a.getAttribute('href');
         if (!href) return;
         if (href === path || (href !== '/' && path.startsWith(href))) {

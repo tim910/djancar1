@@ -38,12 +38,13 @@ if not exist "venv\Scripts\activate.bat" (
 
 call venv\Scripts\activate.bat
 
-REM ===== [3] Install dependencies if needed =====
+REM ===== [3] Install/sync dependencies =====
 echo.
 echo [3/7] Dependencies...
-python -c "import django" >nul 2>&1
+REM Check the LAST added package (dj_database_url) — if missing, sync all
+python -c "import dj_database_url" >nul 2>&1
 if errorlevel 1 (
-    echo   Installing packages... this may take 2 minutes
+    echo   Syncing packages from requirements.txt... this may take 2 minutes
     python -m pip install --upgrade pip --quiet
     pip install -r requirements.txt
     if errorlevel 1 (
@@ -53,7 +54,7 @@ if errorlevel 1 (
     )
     echo   OK - packages installed
 ) else (
-    echo   OK - packages already installed
+    echo   OK - packages up to date
 )
 
 REM ===== [4] Create .env if missing =====
